@@ -134,6 +134,17 @@ a{color:inherit}
 .foot{text-align:center;font-size:11.5px;color:var(--muted);margin-top:22px;line-height:1.6}
 .foot b{color:var(--ink)}
 
+/* ---------- Telegram (end screen only) ---------- */
+.tg{margin:20px 0 6px;padding:16px;border-radius:16px;background:linear-gradient(135deg,#eaf6fd,#f2eefe);border:1px solid #d6e9f7;text-align:left}
+.tg-h{font-size:14px;font-weight:800;color:var(--ink);margin:0 0 12px;text-align:center;line-height:1.4}
+.tg-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;
+  background:#fff;border:1.5px solid #cfe6f6;border-radius:12px;padding:12px 14px;margin-bottom:9px;transition:.15s}
+.tg-btn:last-child{margin-bottom:0}
+.tg-btn:hover{border-color:#229ED9;box-shadow:0 6px 16px rgba(34,158,217,.16);transform:translateY(-1px)}
+.tg-btn .tg-ic{width:30px;height:30px;border-radius:50%;background:#229ED9;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+.tg-btn .tg-name{flex:1;font-weight:700;font-size:13.5px;color:var(--ink)}
+.tg-btn .tg-handle{font-weight:700;font-size:13px;color:#1c86bd}
+
 @media (max-width:540px){
   .dd-grid{grid-template-columns:1fr}
   .how{grid-template-columns:1fr;gap:8px}
@@ -767,8 +778,22 @@ let idx = 0;                 // current station
 let firstTryCorrect = 0;     // score: stations where BOTH stages solved without a wrong click
 let solvedStations = 0;
 let stationErr = false;      // any wrong click on current station
+let RTs1 = null, RTs2 = null; // runtime shuffled state for the current station
 
-function esc(s){return s;}
+function shuffleOrder(n){
+  const a=[...Array(n).keys()];
+  for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+// Shuffle a question's options while keeping the aligned feedback (hints/exp) and correct index in sync.
+function buildQ(src, fbKey){
+  const order = shuffleOrder(src.opts.length);
+  return {
+    opts: order.map(i=>src.opts[i]),
+    fb: order.map(i=>src[fbKey][i]),
+    correct: order.indexOf(src.correct)
+  };
+}
 
 function startScreen(){
   app.innerHTML = `
@@ -823,7 +848,8 @@ function renderStation(){
      <div id="stage2" class="hidden"></div>
      <div id="stage3" class="hidden"></div>
    </section>`;
-  renderOpts("s1opts", d.s1.opts, (i,btn)=>answerS1(i,btn));
+  RTs1 = buildQ(d.s1, "hints");
+  renderOpts("s1opts", RTs1.opts, (i,btn)=>answerS1(i,btn));
 }
 
 function renderOpts(containerId, opts, cb){
@@ -840,11 +866,10 @@ function renderOpts(containerId, opts, cb){
 
 /* ---- Stage 1: spot the image ---- */
 function answerS1(i, btn){
-  const d = DATA[idx];
   if(btn.classList.contains("wrong")) return;
-  if(i === d.s1.correct){
+  if(i === RTs1.correct){
     btn.classList.add("correct");
-    disableGroup("s1opts", d.s1.correct);
+    disableGroup("s1opts", RTs1.correct);
     document.getElementById("s1fb").innerHTML =
       `<div class="fb good"><span class="lbl">Correct</span>Good spot — that's the right call. Now raise the difficulty.</div>`;
     document.getElementById("s1next").classList.remove("hidden");
@@ -853,7 +878,7 @@ function answerS1(i, btn){
     btn.classList.add("wrong");
     btn.disabled = true;
     document.getElementById("s1fb").innerHTML =
-      `<div class="fb hint"><span class="lbl">Hint — what you missed</span>${d.s1.hints[i]}</div>`;
+      `<div class="fb hint"><span class="lbl">Hint — what you missed</span>${RTs1.fb[i]}</div>`;
   }
 }
 
@@ -873,25 +898,25 @@ function showStage2(){
      <div class="actions hidden" id="s2next">
        <button class="btn btn-primary" onclick="showStage3()">Unlock the mastery cards →</button>
      </div>`;
-  renderOpts("s2opts", d.s2.opts, (i,btn)=>answerS2(i,btn));
+  RTs2 = buildQ(d.s2, "exp");
+  renderOpts("s2opts", RTs2.opts, (i,btn)=>answerS2(i,btn));
   s.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function answerS2(i, btn){
-  const d = DATA[idx];
   if(btn.classList.contains("wrong")) return;
-  if(i === d.s2.correct){
+  if(i === RTs2.correct){
     btn.classList.add("correct");
-    disableGroup("s2opts", d.s2.correct);
+    disableGroup("s2opts", RTs2.correct);
     document.getElementById("s2fb").innerHTML =
-      `<div class="fb good"><span class="lbl">Correct · why</span>${d.s2.exp[i]}</div>`;
+      `<div class="fb good"><span class="lbl">Correct · why</span>${RTs2.fb[i]}</div>`;
     document.getElementById("s2next").classList.remove("hidden");
   } else {
     stationErr = true;
     btn.classList.add("wrong");
     btn.disabled = true;
     document.getElementById("s2fb").innerHTML =
-      `<div class="fb bad"><span class="lbl">Not this one — here's why</span>${d.s2.exp[i]}</div>`;
+      `<div class="fb bad"><span class="lbl">Not this one — here's why</span>${RTs2.fb[i]}</div>`;
   }
 }
 
@@ -947,6 +972,17 @@ function endScreen(){
      <div class="how" style="grid-template-columns:1fr 1fr">
        <div class="step"><div class="n">✓</div><div><b>${solvedStations} stations solved</b><span>All images completed.</span></div></div>
        <div class="step"><div class="n">↻</div><div><b>Spaced repetition</b><span>Re-run to push clean solves higher.</span></div></div>
+     </div>
+     <div class="tg">
+       <p class="tg-h">📣 For more quizzes like this, join your channel</p>
+       <a class="tg-btn" href="https://t.me/IndianGovtExamsAI" target="_blank" rel="noopener">
+         <span class="tg-ic">✈</span><span class="tg-name">All Indian Govt Exams</span><span class="tg-handle">@IndianGovtExamsAI</span></a>
+       <a class="tg-btn" href="https://t.me/neetpgprepriga" target="_blank" rel="noopener">
+         <span class="tg-ic">✈</span><span class="tg-name">NEET PG</span><span class="tg-handle">@neetpgprepriga</span></a>
+       <a class="tg-btn" href="https://t.me/upsccmsprepriga" target="_blank" rel="noopener">
+         <span class="tg-ic">✈</span><span class="tg-name">UPSC CMS</span><span class="tg-handle">@upsccmsprepriga</span></a>
+       <a class="tg-btn" href="https://t.me/crackfmgeprepriga" target="_blank" rel="noopener">
+         <span class="tg-ic">✈</span><span class="tg-name">FMGE</span><span class="tg-handle">@crackfmgeprepriga</span></a>
      </div>
      <button class="btn btn-primary" onclick="begin()">Practise again ↻</button>
    </section>`;
