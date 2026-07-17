@@ -145,6 +145,31 @@ a{color:inherit}
 .tg-btn .tg-name{flex:1;font-weight:700;font-size:13.5px;color:var(--ink)}
 .tg-btn .tg-handle{font-weight:700;font-size:13px;color:#1c86bd}
 
+/* ---------- Home menu ---------- */
+.menu{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.mode-card{display:flex;align-items:center;gap:14px;text-align:left;width:100%;cursor:pointer;font-family:inherit;
+  background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);transition:.15s}
+.mode-card:hover{border-color:var(--indigo);transform:translateY(-2px)}
+.mode-card .mc-ic{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 auto;color:#fff}
+.mode-card .mc-b{flex:1}
+.mode-card .mc-b h3{margin:0 0 3px;font-size:16px;font-weight:800}
+.mode-card .mc-b p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}
+.mode-card .mc-n{font-size:12px;font-weight:800;color:var(--indigo-d);background:#eef0ff;padding:4px 9px;border-radius:999px;flex:0 0 auto}
+.mc-img{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.mc-sce{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
+.mc-vid{background:linear-gradient(135deg,#ef4444,#f59e0b)}
+
+/* ---------- Video ---------- */
+.videowrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
+.videowrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.watchlink{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:600;color:#c2410c;text-decoration:none}
+.watchlink:hover{text-decoration:underline}
+
+/* ---------- Vignette ---------- */
+.vignette{background:#f7f8ff;border:1px solid var(--line);border-left:4px solid var(--indigo);border-radius:10px;padding:13px 15px;margin:14px 0 2px;font-size:14.5px;line-height:1.55;color:#33384a}
+.subjbadge{display:inline-block;font-size:11px;font-weight:700;color:var(--indigo-d);background:#eef0ff;padding:4px 10px;border-radius:999px;margin:14px 0 2px}
+.backbtn{margin-top:10px}
+
 @media (max-width:540px){
   .dd-grid{grid-template-columns:1fr}
   .how{grid-template-columns:1fr;gap:8px}
@@ -167,7 +192,7 @@ a{color:inherit}
     </div>
     <div class="hero">
       <h1>Image Rx — Spot · Solve · Master</h1>
-      <p>20 high-yield clinical images. Recognise it, crack an exam-level MCQ, then master the concept.</p>
+      <p>50 exam-grade cases — 20 image stations, 20 clinical scenarios, 10 video cases. Built to make you think hard.</p>
       <div class="exampills"><span>NEET PG</span><span>INI-CET</span><span>UPSC CMS</span><span>FMGE</span></div>
     </div>
   </div>
@@ -770,86 +795,570 @@ const DATA = [
 ];
 
 /* ============================================================
+   HARDS2 — harder, second-order replacement questions for the
+   image stations (keyed by station id). Used instead of station.s2.
+   ============================================================ */
+const HARDS2 = {
+ herpes_zoster:{tag:"INI-CET",
+   q:"A 68-y man has painful forehead vesicles extending to the tip of his nose, now with a red eye and blurred vision. Beyond oral antivirals, the finding that MOST specifically predicts ocular involvement and the correct action:",
+   opts:["Hutchinson sign (nasociliary branch) → urgent ophthalmology referral for zoster keratitis/uveitis","Ramsay Hunt syndrome → ENT referral for facial palsy","Positive Nikolsky sign → dermatology for toxic epidermal necrolysis","A dendritic ulcer means bacterial keratitis → topical antibiotics only"],
+   correct:0,
+   exp:["Correct. A nose-tip vesicle = nasociliary nerve (branch of V1) involvement → high risk of herpes zoster ophthalmicus; needs urgent slit-lamp assessment and antivirals ± ophthalmology-guided topical steroid.","Ramsay Hunt is geniculate-ganglion zoster (ear vesicles + facial palsy), not the forehead/nose distribution.","Nikolsky/TEN is a drug-induced desquamation, unrelated to dermatomal zoster.","HZO can cause a pseudodendrite, but it is viral — treated with antivirals, not topical antibiotics."]},
+ malar_rash:{tag:"NEET PG",
+   q:"A 26-y woman with malar rash and 2.5 g/day proteinuria has positive anti-dsDNA and low C3/C4. Renal biopsy shows subendothelial deposits and wire-loop capillaries. The class of lupus nephritis and its implication:",
+   opts:["Class IV (diffuse proliferative) — most severe; needs aggressive induction immunosuppression","Class II (mesangial) — observation only","Class V (membranous) — ACE inhibitor alone suffices","Class VI (advanced sclerosing) — immunosuppression will reverse it"],
+   correct:0,
+   exp:["Correct. Wire-loop lesions + subendothelial deposits + low complement + high dsDNA = class IV, the commonest and most severe; treat with induction (steroids + MMF or cyclophosphamide).","Class II is mild mesangial disease; wire-loops indicate proliferative disease.","Class V is membranous (subepithelial deposits, nephrotic) — this biopsy is proliferative.","Class VI is >90% globally sclerosed glomeruli — irreversible; immunosuppression won't help."]},
+ acanthosis:{tag:"NEET PG",
+   q:"A lean 40-y man develops florid acanthosis nigricans over months, with tripe palms and a crop of new seborrhoeic keratoses. The single most appropriate next step:",
+   opts:["Upper GI endoscopy to exclude gastric adenocarcinoma","Start metformin for presumed insulin resistance","Reassure — this is benign obesity-related change","Measure fasting cortisol for Cushing syndrome"],
+   correct:0,
+   exp:["Correct. Abrupt florid AN + tripe palms + sign of Leser–Trélat (eruptive seborrhoeic keratoses) is a paraneoplastic triad, classically gastric adenocarcinoma → endoscopy.","This pattern is malignant AN, not simple insulin resistance; metformin misses the cancer.","It is abrupt and in a lean patient — not benign; reassurance is dangerous.","Cushing can cause AN but not tripe palms + eruptive keratoses; malignancy is the priority."]},
+ owl_eye:{tag:"NEET PG",
+   q:"An AIDS patient (CD4 30) on ganciclovir for biopsy-proven CMV retinitis develops new lesions; resistance is suspected. The mechanism of ganciclovir resistance and the correct switch:",
+   opts:["UL97 kinase mutation prevents drug phosphorylation → switch to foscarnet","Thymidine-kinase loss → switch to aciclovir","DNA gyrase mutation → switch to ciprofloxacin","Falling CD4 makes all antivirals useless → stop therapy"],
+   correct:0,
+   exp:["Correct. Ganciclovir needs the CMV UL97 kinase for activation; a UL97 mutation causes resistance; foscarnet doesn't require phosphorylation and is the switch.","Thymidine kinase is the HSV/VZV (aciclovir) pathway; aciclovir has poor CMV activity anyway.","DNA gyrase/ciprofloxacin is bacterial — irrelevant to CMV.","Stopping antivirals guarantees blindness and dissemination."]},
+ achalasia:{tag:"INI-CET",
+   q:"High-resolution manometry shows 100% failed peristalsis with premature spastic contractions and a high integrated relaxation pressure — Chicago type III achalasia. The therapy MOST likely to give durable relief:",
+   opts:["Per-oral endoscopic myotomy (POEM) with a long myotomy","Botulinum toxin injection as definitive therapy","A proton pump inhibitor","A calcium-channel blocker as a first-line cure"],
+   correct:0,
+   exp:["Correct. Type III (spastic) achalasia has a long spastic segment; POEM allows a tailored long myotomy and gives the best durable outcome.","Botulinum toxin lasts only months — reserved for poor surgical candidates, not definitive.","PPIs treat reflux, not the non-relaxing LES or aperistalsis.","CCBs/nitrates give only marginal, transient benefit — not a cure."]},
+ thumb_sign:{tag:"FMGE",
+   q:"A 4-y unvaccinated child with drooling and tripod posture is being prepared for controlled intubation when he suddenly becomes agitated and cyanotic. The immediate best action:",
+   opts:["Bag-mask ventilation with 100% O₂ while proceeding to an emergent definitive airway","Lie the child flat and pass a nasogastric tube","Perform immediate needle cricothyrotomy before attempting anything else","Give IV dexamethasone and wait 15 minutes"],
+   correct:0,
+   exp:["Correct. Acute deterioration signals impending complete obstruction — attempt BMV with 100% O₂ while securing a definitive airway (ENT/anaesthesia present, surgical airway on standby).","Lying flat and instrumenting the pharynx can precipitate complete obstruction.","Cricothyrotomy is a rescue if BMV and intubation fail, not the first move.","Steroids act far too slowly for an obstructing-airway emergency."]},
+ mca_infarct:{tag:"NEET PG",
+   q:"A 62-y man, 3 h after right hemiparesis and aphasia: NCCT shows no bleed (ASPECTS 9); CTA shows a left M1 occlusion; BP 180/100. Best management:",
+   opts:["IV thrombolysis now AND transfer for mechanical thrombectomy (bridging therapy)","Thrombectomy only — skip thrombolysis because BP is high","Aspirin 300 mg and admit; no reperfusion","Rapidly lower BP to <120/80, then reassess"],
+   correct:0,
+   exp:["Correct. Within 4.5 h, ASPECTS ≥6 with a large-vessel (M1) occlusion → give IV thrombolysis (BP <185/110 is acceptable) and proceed to thrombectomy — bridging is standard.","Eligible patients should still receive IV thrombolysis; 180/100 is under the 185/110 threshold.","Withholding reperfusion in an eligible LVO wastes salvageable brain.","Aggressive BP lowering can extend the infarct; only treat BP >185/110 before lysis."]},
+ double_bubble:{tag:"NEET PG",
+   q:"A newborn vomits bile at 6 h of life. AXR shows a double bubble but with a small amount of distal gas. The critical diagnosis to exclude immediately:",
+   opts:["Malrotation with midgut volvulus — urgent upper-GI contrast study","Uncomplicated duodenal atresia — schedule elective repair","Hirschsprung disease — arrange rectal biopsy","Physiological air-swallowing — reassure the parents"],
+   correct:0,
+   exp:["Correct. Bilious vomiting + double bubble WITH distal gas suggests incomplete obstruction — malrotation with volvulus can mimic this and is a surgical emergency (ischaemia); urgent upper-GI series ('corkscrew'/whirlpool).","Classic atresia has NO distal gas; the distal gas here must not be dismissed as simple atresia.","Hirschsprung causes a low/distal obstruction, not a double bubble.","Bilious vomiting in a neonate is never physiological."]},
+ bamboo_spine:{tag:"INI-CET",
+   q:"A 30-y man with long-standing ankylosing spondylitis and a rigid, fused spine falls from standing height and now has severe neck pain. The most important immediate concern:",
+   opts:["An unstable spinal fracture (often cervicothoracic) with high cord-injury risk — immobilise and CT the whole spine","A simple muscular strain — reassure and give NSAIDs","Acute anterior uveitis","Cauda equina from a disc prolapse"],
+   correct:0,
+   exp:["Correct. The ankylosed spine behaves like a long bone — even minor trauma causes unstable (often three-column) fractures, frequently at the cervicothoracic junction, with high neurological risk; immobilise and CT.","Assuming a 'strain' in AS after trauma is dangerous — these fractures are easily missed on plain films.","Uveitis is an eye emergency but unrelated to this trauma/neck pain.","Cauda equina is possible in AS, but the acute post-fall cervical picture points to fracture."]},
+ osteosarcoma:{tag:"NEET PG",
+   q:"A 16-y with distal-femur osteosarcoma finishes neoadjuvant chemotherapy; resection histology shows 60% tumour necrosis. The prognostic meaning and next step:",
+   opts:["<90% necrosis = poor responder → worse prognosis; continue/adjust adjuvant chemotherapy","60% necrosis is an excellent response → stop all therapy","Necrosis is irrelevant; only tumour size matters","Poor necrosis mandates immediate amputation regardless of margins"],
+   correct:0,
+   exp:["Correct. ≥90% necrosis after neoadjuvant chemo predicts a good outcome; <90% marks a poor responder → worse prognosis, and adjuvant chemo is given (regimen may be intensified).","<90% is a poor response, not excellent; stopping therapy is wrong.","Percentage necrosis is a validated key prognostic factor.","Limb salvage vs amputation depends on resectability/margins, not automatically amputation."]},
+ crao:{tag:"INI-CET",
+   q:"A 72-y woman with sudden painless monocular blindness has a pale retina with a cherry-red spot; ESR 90, high CRP, jaw claudication and scalp tenderness. The immediate priority:",
+   opts:["High-dose systemic corticosteroids at once to protect the fellow eye (giant cell arteritis)","Ocular massage only, then discharge","Wait for the temporal-artery biopsy result before treating","Start aspirin alone and review in a week"],
+   correct:0,
+   exp:["Correct. This is arteritic CRAO from giant cell arteritis — start high-dose steroids immediately to prevent contralateral blindness; biopsy can follow within 1–2 weeks.","Massage may help embolic CRAO but ignores the sight-threatening GCA that needs steroids.","Never delay steroids for biopsy when GCA is suspected.","Aspirin alone is inadequate; steroids are the priority."]},
+ kf_ring:{tag:"NEET PG",
+   q:"A 22-y with a Kayser–Fleischer ring presents with acute liver failure, Coombs-negative haemolytic anaemia and a LOW serum alkaline phosphatase. The unifying diagnosis and definitive treatment:",
+   opts:["Wilson disease with fulminant hepatic failure → liver transplantation","Autoimmune hepatitis → high-dose steroids are curative","Hereditary spherocytosis → splenectomy","Gilbert syndrome → reassurance"],
+   correct:0,
+   exp:["Correct. Fulminant Wilsonian failure classically shows Coombs-negative haemolysis + low ALP + high bilirubin; it is an indication for urgent transplantation (chelation alone won't rescue).","AIH gives neither a KF ring nor a low ALP; steroids won't fix fulminant Wilson.","Spherocytosis doesn't explain the KF ring or liver failure.","Gilbert is benign unconjugated hyperbilirubinaemia, not fulminant failure."]},
+ quinsy:{tag:"FMGE",
+   q:"A 19-y with a peritonsillar abscess develops spiking fevers, neck swelling and pleuritic chest pain; CT shows internal jugular vein thrombosis and septic pulmonary emboli. Diagnosis and organism:",
+   opts:["Lemierre syndrome — Fusobacterium necrophorum","Ludwig angina — oral streptococci","Retropharyngeal abscess — Staphylococcus aureus","Infective endocarditis — Streptococcus viridans"],
+   correct:0,
+   exp:["Correct. Oropharyngeal infection → IJV septic thrombophlebitis + septic pulmonary emboli = Lemierre syndrome, classically Fusobacterium necrophorum.","Ludwig angina is submandibular cellulitis of the floor of mouth, without IJV thrombosis/emboli.","Retropharyngeal abscess widens the prevertebral space; it doesn't cause this Fusobacterium picture.","Endocarditis affects heart valves, not IJV thrombophlebitis from a throat source."]},
+ erythema_multiforme:{tag:"NEET PG",
+   q:"A patient on a sulfonamide develops dusky macules and blisters over 25% of the body with mucosal erosions and a positive Nikolsky sign. Diagnosis and priority:",
+   opts:["SJS/TEN overlap — stop the drug immediately and manage as for a burns patient","Erythema multiforme major — continue the drug and give aciclovir","Staphylococcal scalded skin syndrome — IV flucloxacillin; benign prognosis","Bullous pemphigoid — high-dose steroids for a chronic course"],
+   correct:0,
+   exp:["Correct. >10% detachment with a positive Nikolsky sign and mucosal involvement = SJS/TEN spectrum (10–30% detachment = overlap); it is drug-triggered — withdraw the drug at once and give burns-unit-style supportive care (SCORTEN prognosticates).","EM major is HSV-driven with true target lesions and <10% detachment — not 25% with Nikolsky.","SSSS spares mucosa, splits at the granular layer, and affects young children.","Bullous pemphigoid gives tense subepidermal bullae, is Nikolsky-negative and chronic — not this acute drug reaction."]},
+ miliary_tb:{tag:"UPSC CMS",
+   q:"A patient with miliary TB on HRZE becomes confused with headache on day 4. LP: high protein, low glucose, lymphocytosis. Beyond continuing ATT, the key additions:",
+   opts:["Add corticosteroids (dexamethasone) for TB meningitis and confirm with CSF TB-PCR","Stop all ATT — this is drug toxicity","Add broad-spectrum antibiotics for pyogenic meningitis and stop ATT","This is isoniazid neuropathy — simply add pyridoxine"],
+   correct:0,
+   exp:["Correct. Miliary TB frequently seeds the meninges; a lymphocytic CSF with very low glucose is TB meningitis → adjunctive corticosteroids reduce mortality; confirm with CSF TB-PCR/culture.","Stopping ATT in disseminated TB is dangerous; this is CNS spread, not toxicity.","The CSF is classic TB (lymphocytic, very low glucose), not pyogenic — don't stop ATT.","INH neuropathy is peripheral and late, not acute meningitic confusion."]},
+ vitiligo:{tag:"INI-CET",
+   q:"A 30-y with vitiligo and prior pernicious anaemia now has fatigue, weight gain and cold intolerance. The unifying mechanism and the single best screening test:",
+   opts:["Autoimmune polyglandular clustering → check TSH (autoimmune hypothyroidism)","This is Addison disease → a random cortisol is diagnostic","Vitamin B12 deficiency alone explains it → give B12 only","Vogt–Koyanagi–Harada syndrome → lumbar puncture"],
+   correct:0,
+   exp:["Correct. Vitiligo + pernicious anaemia + hypothyroid symptoms = autoimmune polyglandular tendency; TSH is the best screen for the current picture.","Addison causes weight LOSS, hyperpigmentation and hypotension — not weight gain/cold intolerance; a random cortisol isn't diagnostic.","B12 deficiency doesn't cause weight gain/cold intolerance — the thyroid is the issue.","VKH has uveitis, meningismus and poliosis, not hypothyroid symptoms."]},
+ sigmoid_volvulus:{tag:"NEET PG",
+   q:"An 80-y with sigmoid volvulus undergoes flatus-tube decompression, but the aspirate is bloodstained and lactate is rising with abdominal tenderness. Next step:",
+   opts:["Emergency laparotomy (resection, likely Hartmann's) for suspected gangrene","Repeat endoscopic decompression only","Book an elective sigmoidectomy in 6 weeks","Barium enema to reduce the volvulus"],
+   correct:0,
+   exp:["Correct. Bloodstained aspirate + rising lactate + peritonism indicate bowel ischaemia/gangrene → emergency surgery (resection ± Hartmann's).","Repeating decompression ignores ischaemia and risks perforation and death.","Elective surgery is for recurrence after SUCCESSFUL decompression, not current gangrene.","Barium reduction is for intussusception and is contraindicated with suspected ischaemia."]},
+ lead_pipe:{tag:"NEET PG",
+   q:"A patient with 12-year pancolitis (UC) develops pruritus and cholestatic LFTs; MRCP shows a 'beaded' intra- and extra-hepatic biliary tree. The association and its surveillance implication:",
+   opts:["Primary sclerosing cholangitis → raised colorectal AND cholangiocarcinoma risk; intensify surveillance","Primary biliary cholangitis → AMA positive, no cancer link","Gallstone obstruction → ERCP and discharge","Autoimmune hepatitis → steroids normalise the ducts"],
+   correct:0,
+   exp:["Correct. UC + a beaded biliary tree = primary sclerosing cholangitis, which markedly raises colorectal cancer risk (needs annual colonoscopy) and cholangiocarcinoma risk.","PBC affects middle-aged women (AMA+, small ducts) and isn't the UC association or a beaded large-duct picture.","A beaded whole biliary tree is not a single stone; ERCP + discharge misses PSC and its cancer risk.","AIH doesn't cause a beaded biliary tree, and steroids won't reverse PSC."]},
+ osteoarthritis:{tag:"FMGE",
+   q:"A 55-y man has OA-like changes but at the 2nd and 3rd MCP joints with chondrocalcinosis, plus skin bronzing and diabetes. The unifying diagnosis and confirmatory test:",
+   opts:["Hereditary haemochromatosis → transferrin saturation/ferritin (then HFE genotype)","Primary generalised OA → no further tests needed","Rheumatoid arthritis → anti-CCP antibody","Gout → serum urate"],
+   correct:0,
+   exp:["Correct. OA of the 2nd/3rd MCPs + chondrocalcinosis (CPPD) + bronze skin + diabetes = haemochromatosis; screen with transferrin saturation/ferritin and confirm with HFE genotyping.","MCP OA is atypical for primary OA and is a red flag for haemochromatosis/CPPD.","RA gives erosions and periarticular osteopenia with positive anti-CCP, not chondrocalcinosis + bronzing.","Gout affects the first MTP with punched-out erosions, not MCP OA with bronzing and diabetes."]},
+ apple_core:{tag:"UPSC CMS",
+   q:"A 65-y with a confirmed apple-core sigmoid adenocarcinoma has staging CT showing 3 liver metastases confined to the right lobe; CEA is raised. The CORRECT statement is:",
+   opts:["Resectable liver metastases can still be treated with curative intent (metastasectomy + chemotherapy)","Any liver metastasis makes the disease incurable — palliate only","CEA is a population screening test for colorectal cancer","A high-fibre diet now will regress the tumour"],
+   correct:0,
+   exp:["Correct. Isolated, resectable colorectal liver metastases can be resected (± perioperative chemotherapy) with curative intent and meaningful 5-year survival.","Limited resectable liver metastases are not automatically incurable — metastasectomy is offered.","CEA is used for monitoring/recurrence, not population screening.","Diet cannot regress an established adenocarcinoma."]}
+};
+
+/* ============================================================
+   SCENARIOS — 20 extreme clinical-vignette MCQs (no image).
+   ============================================================ */
+const SCENARIOS = [
+ {id:"sc_biostat", modality:"Biostatistics",
+  vignette:"A new rapid test for dengue is studied in 1000 patients. 200 truly have dengue; the test is positive in 180 of them and positive in 80 of those without disease.",
+  s2:{tag:"FMGE", q:"What are the sensitivity and the positive predictive value?",
+   opts:["Sensitivity 90%, PPV ~69%","Sensitivity 69%, PPV 90%","Sensitivity 90%, PPV 90%","Sensitivity 69%, PPV 69%"],
+   correct:0,
+   exp:["Correct. Sensitivity = TP/(TP+FN) = 180/200 = 90%. PPV = TP/(TP+FP) = 180/260 ≈ 69%.","This swaps the two — PPV depends on false positives and prevalence, not 90%.","PPV is not 90%; the 80 false positives pull it down to ~69%.","Sensitivity is 90% (180/200), not 69%."]},
+  dd:{fast:"Draw the 2×2: sensitivity runs DOWN the diseased column; PPV runs ACROSS the test-positive row.",
+   pattern:"Sensitivity/specificity are test properties (prevalence-independent). PPV/NPV move with prevalence — low prevalence tanks PPV.",
+   deep:"Prevalence here is 20%. A PPV of 69% means ~31% of positives are false. Raising specificity (fewer false positives) lifts PPV more than raising sensitivity does.",
+   facts:"Specificity = 720/800 = 90%, so LR+ = sens/(1−spec) = 0.9/0.1 = 9. An LR+ near 10 strongly rules in.",
+   bonus:"SnNOut / SpPIn: a highly sensitive test, when negative, helps rule the disease out."}},
+ {id:"sc_warfarin", modality:"Pharmacology",
+  vignette:"A 60-y man on warfarin for atrial fibrillation is started on a course of antibiotics. Five days later his INR is 8 with gum bleeding but no major haemorrhage.",
+  s2:{tag:"NEET PG", q:"Most likely mechanism and correct immediate management?",
+   opts:["CYP450 inhibition raised warfarin levels → withhold warfarin and give oral vitamin K","CYP450 induction → increase the warfarin dose","The antibiotic permanently displaced warfarin → stop warfarin for life","Give protamine to reverse the warfarin"],
+   correct:0,
+   exp:["Correct. Many antibiotics (metronidazole, ciprofloxacin, cotrimoxazole, macrolides) inhibit CYP2C9 → raised warfarin effect. For INR >8 without major bleeding: withhold warfarin + oral vitamin K.","This is enzyme inhibition, not induction; raising the dose would worsen bleeding.","It is a transient interaction, not permanent — stopping forever is wrong.","Protamine reverses heparin, not warfarin; vitamin K ± PCC reverses warfarin."]},
+  dd:{fast:"High INR + a new antibiotic = CYP inhibition. INR >8, no bleed → hold + oral vitamin K. Major bleed → PCC + IV vitamin K.",
+   pattern:"Inhibitors (↑warfarin): metronidazole, ciprofloxacin, cotrimoxazole, macrolides, azoles, amiodarone, cimetidine, grapefruit. Inducers (↓): rifampicin, carbamazepine, phenytoin, St John's wort.",
+   deep:"Warfarin blocks vitamin-K epoxide reductase (factors II, VII, IX, X, protein C/S). Reverse slowly with vitamin K or rapidly with PCC/FFP. Target INR 2–3 for AF.",
+   facts:"Antidotes: protamine → heparin; idarucizumab → dabigatran; andexanet alfa → factor-Xa inhibitors.",
+   bonus:"Warfarin is teratogenic — use heparin/LMWH in pregnancy."}},
+ {id:"sc_dka", modality:"Acid–base / Endocrine",
+  vignette:"A drowsy young diabetic has: pH 7.10, HCO₃ 6, pCO₂ 17, Na 138, Cl 100, glucose 480 mg/dL, ketones ++.",
+  s2:{tag:"NEET PG", q:"The acid–base interpretation is:",
+   opts:["High anion-gap metabolic acidosis (DKA) with appropriate respiratory compensation","Primary respiratory acidosis","Metabolic alkalosis","Normal anion-gap metabolic acidosis"],
+   correct:0,
+   exp:["Correct. Low pH + low HCO₃ = metabolic acidosis; anion gap = 138−(100+6) = 32 (raised, from ketoacids); Winter's expected pCO₂ = 1.5×6+8 ≈ 17 = measured → appropriate compensation, not a second disorder.","pCO₂ is low (compensating) — the primary problem is metabolic.","Alkalosis would show a high pH and high HCO₃.","The anion gap is high (32), not normal."]},
+  dd:{fast:"Steps: pH → acidosis; HCO₃ low → metabolic; anion gap = Na−(Cl+HCO₃); Winter's pCO₂ = 1.5×HCO₃+8 checks compensation.",
+   pattern:"High-anion-gap acidosis = MUDPILES (Methanol, Uraemia, DKA, Propylene glycol, Iron/INH, Lactate, Ethylene glycol, Salicylate). Normal gap = diarrhoea/RTA.",
+   deep:"DKA management: fluids first, then an insulin infusion, and potassium replacement (total-body K is low despite a normal serum level); always find the trigger (often infection).",
+   facts:"Watch for euglycaemic DKA with SGLT2 inhibitors; use corrected sodium and the ketone response to guide therapy.",
+   bonus:"If K <3.3, give potassium BEFORE insulin to avoid fatal hypokalaemia."}},
+ {id:"sc_gbs", modality:"Microbiology / Neurology",
+  vignette:"A 25-y develops watery then bloody diarrhoea after a barbecue. Ten days later he has ascending limb weakness with areflexia.",
+  s2:{tag:"NEET PG", q:"Most likely preceding organism and the complication?",
+   opts:["Campylobacter jejuni → Guillain–Barré syndrome (molecular mimicry)","Vibrio cholerae → Guillain–Barré syndrome","Shigella → haemolytic uraemic syndrome","EHEC O157 → Guillain–Barré syndrome"],
+   correct:0,
+   exp:["Correct. Campylobacter (undercooked poultry) is the commonest antecedent of GBS via molecular mimicry (anti-GM1); the bloody diarrhoea fits.","Cholera is profuse watery 'rice-water' stool, not bloody, and doesn't trigger GBS.","Shigella causes dysentery; HUS is classically EHEC — and this is a neuropathy, not HUS.","EHEC O157 causes HUS, not GBS."]},
+  dd:{fast:"Bloody diarrhoea then ascending paralysis with areflexia = Campylobacter → GBS.",
+   pattern:"GBS antecedents: Campylobacter, CMV, EBV, Mycoplasma, Zika. HUS: EHEC O157/Shiga toxin. Reactive arthritis: Campylobacter/Shigella/Salmonella/Yersinia (HLA-B27).",
+   deep:"GBS is an acute inflammatory demyelinating polyradiculopathy; CSF shows albumino-cytological dissociation (high protein, normal cells). Treat with IVIG or plasma exchange; monitor FVC and autonomic function.",
+   facts:"Miller–Fisher variant: ophthalmoplegia, ataxia, areflexia; anti-GQ1b antibody.",
+   bonus:"Steroids are NOT effective in GBS."}},
+ {id:"sc_hocm", modality:"Cardiology",
+  vignette:"A 20-y athlete collapses during exertion. Exam: an ejection systolic murmur that gets LOUDER on standing and Valsalva. ECG shows LVH with deep septal Q waves.",
+  s2:{tag:"INI-CET", q:"Diagnosis and the manoeuvre logic?",
+   opts:["Hypertrophic cardiomyopathy — murmur ↑ when preload falls (standing/Valsalva)","Aortic stenosis — murmur ↑ with Valsalva","Mitral regurgitation — murmur ↑ on standing","Innocent flow murmur — no risk"],
+   correct:0,
+   exp:["Correct. In HOCM, reduced preload (standing, Valsalva) shrinks the LV cavity and worsens outflow obstruction, so the murmur gets louder; exertional syncope in a young athlete with septal Q waves fits.","The aortic stenosis murmur gets SOFTER with Valsalva (less flow).","The MR murmur softens with reduced preload (standing) — the opposite here.","Exertional syncope with LVH and a dynamic murmur is not innocent — there is sudden-death risk."]},
+  dd:{fast:"Murmur louder on standing/Valsalva (↓preload) = HOCM (or MVP). Nearly everything else gets softer.",
+   pattern:"HOCM: septal hypertrophy, systolic anterior motion (SAM) of the mitral valve, autosomal-dominant sarcomere genes (β-myosin). Commonest cause of sudden cardiac death in young athletes.",
+   deep:"Avoid dehydration and extreme exertion; treat with beta-blockers; consider an ICD in high-risk patients; screen first-degree relatives.",
+   facts:"Squatting and handgrip (↑preload/afterload) SOFTEN the HOCM murmur — the mirror image of standing/Valsalva.",
+   bonus:"Digoxin, nitrates and diuretics worsen HOCM obstruction — avoid them."}},
+ {id:"sc_psgn", modality:"Nephrology",
+  vignette:"A child, two weeks after a sore throat, develops facial puffiness, smoky (cola-coloured) urine and hypertension; C3 is low and ASO titre high.",
+  s2:{tag:"NEET PG", q:"Diagnosis and prognosis?",
+   opts:["Post-streptococcal glomerulonephritis — usually self-limiting with supportive care","IgA nephropathy — concurrent with infection, progressive","Minimal change disease — a steroid course is curative","Rapidly progressive GN — urgent immunosuppression, poor prognosis"],
+   correct:0,
+   exp:["Correct. Nephritic syndrome 1–3 weeks after strep pharyngitis with low C3 and high ASO = PSGN; children usually recover fully with supportive care.","IgA nephropathy causes synpharyngitic haematuria (1–2 days after infection) with a normal C3.","Minimal change disease is nephrotic (heavy proteinuria, normal C3/BP), not smoky-urine nephritis.","RPGN gives crescents and renal failure over days–weeks; PSGN in children is usually benign."]},
+  dd:{fast:"Nephritic + low C3 + recent strep + high ASO = PSGN (children recover). Haematuria 1–2 days post-URI with normal C3 = IgA nephropathy.",
+   pattern:"Low-C3 nephritis: PSGN, membranoproliferative GN, lupus, endocarditis. Normal-C3: IgA nephropathy, anti-GBM, ANCA vasculitis.",
+   deep:"PSGN shows subepithelial 'humps' on EM and granular IgG/C3 on immunofluorescence. Manage with salt/fluid restriction, antihypertensives and diuretics; C3 normalises by ~8 weeks.",
+   facts:"PSGN can follow skin (impetigo) or throat infection. Adults have a worse prognosis than children.",
+   bonus:"A C3 that stays low beyond 8 weeks should prompt reconsideration of MPGN or lupus."}},
+ {id:"sc_conn", modality:"Endocrinology",
+  vignette:"A 45-y with resistant hypertension, hypokalaemia and metabolic alkalosis (not on diuretics) has a high aldosterone with SUPPRESSED renin.",
+  s2:{tag:"INI-CET", q:"Diagnosis and best next test?",
+   opts:["Primary hyperaldosteronism (Conn) — adrenal CT ± adrenal vein sampling","Renal artery stenosis — high renin drives it","Phaeochromocytoma — plasma metanephrines","Cushing syndrome — dexamethasone suppression test"],
+   correct:0,
+   exp:["Correct. Hypertension + hypokalaemia + high aldosterone with SUPPRESSED renin (raised aldosterone:renin ratio) = primary hyperaldosteronism; localise with CT ± adrenal vein sampling (adenoma vs bilateral hyperplasia).","Renovascular hypertension has HIGH renin (secondary hyperaldosteronism) — the opposite here.","Phaeochromocytoma gives episodic hypertension, sweating and palpitations, not this renin/aldosterone pattern.","Cushing can cause hypertension/hypokalaemia, but aldosterone isn't the driver and renin isn't suppressed with high aldosterone."]},
+  dd:{fast:"HTN + low K + high aldosterone + low renin = Conn's. The aldosterone:renin ratio is the screening test.",
+   pattern:"High aldosterone + LOW renin = primary. High aldosterone + HIGH renin = secondary (renal artery stenosis, diuretics, heart failure).",
+   deep:"Confirm with a saline-suppression test, then CT ± adrenal vein sampling; a unilateral adenoma → adrenalectomy, bilateral hyperplasia → spironolactone/eplerenone.",
+   facts:"Primary aldosteronism is an under-diagnosed cause of resistant hypertension — screen resistant or hypokalaemic hypertensives.",
+   bonus:"Spironolactone can cause gynaecomastia; eplerenone is more selective."}},
+ {id:"sc_eclampsia", modality:"Obstetrics",
+  vignette:"A 28-y at 34 weeks develops headache and BP 165/110 with proteinuria, then a generalised tonic–clonic seizure.",
+  s2:{tag:"NEET PG", q:"First-line drug to control and prevent further seizures?",
+   opts:["IV magnesium sulfate","IV phenytoin","IV diazepam as definitive therapy","IV labetalol to stop the seizure"],
+   correct:0,
+   exp:["Correct. Eclampsia → magnesium sulfate is first-line for seizure control and prophylaxis (superior to phenytoin and diazepam); plan delivery once stabilised.","Phenytoin is inferior to magnesium in eclampsia trials.","Diazepam may abort a seizure acutely but isn't the definitive prophylactic agent — magnesium is.","Labetalol controls blood pressure, not seizures."]},
+  dd:{fast:"Eclamptic seizure = magnesium sulfate (control + prevent). Control BP separately (labetalol/hydralazine/nifedipine). Definitive cure = delivery.",
+   pattern:"Magnesium toxicity order: loss of deep tendon reflexes → respiratory depression → cardiac arrest. Antidote = IV calcium gluconate.",
+   deep:"Severe features: BP ≥160/110, proteinuria, headache, visual change, RUQ pain, HELLP. Deliver after stabilisation; give antenatal steroids for fetal lungs if preterm.",
+   facts:"Monitor reflexes, respiratory rate, urine output and Mg levels. HELLP = Haemolysis, Elevated Liver enzymes, Low Platelets.",
+   bonus:"Magnesium also neuroprotects the preterm fetal brain."}},
+ {id:"sc_pertussis", modality:"Paediatrics",
+  vignette:"A 6-month unvaccinated infant has 2 weeks of paroxysmal coughing fits with an inspiratory 'whoop' and post-tussive vomiting; the CBC shows marked lymphocytosis.",
+  s2:{tag:"FMGE", q:"Organism and best treatment?",
+   opts:["Bordetella pertussis — a macrolide (azithromycin)","Respiratory syncytial virus — ribavirin","Corynebacterium diphtheriae — antitoxin","Haemophilus influenzae type b — ceftriaxone"],
+   correct:0,
+   exp:["Correct. Paroxysmal cough + whoop + post-tussive vomiting + marked lymphocytosis = pertussis; macrolides (azithromycin) are best given early and reduce transmission.","RSV bronchiolitis gives wheeze/crackles in infants, not a whoop with lymphocytosis; ribavirin is rarely used.","Diphtheria gives a grey pseudomembrane, not whooping cough.","HiB causes epiglottitis/meningitis, not a paroxysmal whoop."]},
+  dd:{fast:"Whoop + post-tussive vomiting + lymphocytosis = pertussis → azithromycin + prophylaxis for close contacts.",
+   pattern:"Stages: catarrhal (most infectious) → paroxysmal (whoop) → convalescent. Vaccine: DTaP/Tdap.",
+   deep:"Pertussis toxin drives the lymphocytosis. Antibiotics help most in the catarrhal stage and mainly limit spread later. Infants risk apnoea — admit.",
+   facts:"Cocooning: vaccinate pregnant women (Tdap) and close contacts to protect newborns.",
+   bonus:"Culture on Bordet–Gengou medium; PCR is more sensitive."}},
+ {id:"sc_ttp", modality:"Haematology",
+  vignette:"A 30-y woman post-partum develops fever, fluctuating confusion and petechiae. Labs: low platelets, schistocytes, NORMAL PT/aPTT, high LDH and mild renal impairment.",
+  s2:{tag:"NEET PG", q:"Diagnosis and the treatment to start urgently?",
+   opts:["Thrombotic thrombocytopenic purpura — urgent plasma exchange","DIC — give FFP and cryoprecipitate","Immune thrombocytopenia — IVIG/steroids","HELLP syndrome — deliver the baby"],
+   correct:0,
+   exp:["Correct. Microangiopathic haemolysis (schistocytes) + thrombocytopenia + neurological change + renal + fever with NORMAL coagulation = TTP (ADAMTS13 deficiency); plasma exchange is life-saving.","DIC prolongs PT/aPTT and consumes fibrinogen — here coagulation is normal.","ITP shows isolated thrombocytopenia without schistocytes or haemolysis.","HELLP is peripartum with deranged liver enzymes; this pentad is TTP — and platelet transfusion is contraindicated in TTP."]},
+  dd:{fast:"MAHA + thrombocytopenia + NORMAL coagulation → TTP → plasma exchange now. Avoid platelet transfusion (fuels thrombosis).",
+   pattern:"TTP pentad: fever, MAHA, thrombocytopenia, neurological signs, renal impairment (often incomplete). HUS is more renal, in children, EHEC-related.",
+   deep:"TTP = ADAMTS13 deficiency → uncleaved large vWF multimers → platelet microthrombi. Treat with plasma exchange ± steroids/rituximab/caplacizumab.",
+   facts:"DIC vs TTP: DIC has low fibrinogen, high D-dimer and prolonged PT/aPTT; in TTP coagulation is normal.",
+   bonus:"Platelet transfusion in TTP can precipitate fatal thrombosis — avoid unless there is life-threatening bleeding."}},
+ {id:"sc_zes", modality:"Gastroenterology",
+  vignette:"A 40-y has recurrent duodenal ulcers refractory to PPIs plus diarrhoea; fasting gastrin is markedly elevated with a low gastric pH.",
+  s2:{tag:"INI-CET", q:"Diagnosis and associated syndrome?",
+   opts:["Zollinger–Ellison syndrome (gastrinoma) — screen for MEN1","Helicobacter pylori gastritis — give triple therapy","Chronic atrophic gastritis — replace vitamin B12","Gastric outlet obstruction — endoscopic dilation"],
+   correct:0,
+   exp:["Correct. Refractory/multiple ulcers + diarrhoea + very high gastrin with acid hypersecretion = gastrinoma (ZES); check for MEN1 (parathyroid, pancreas, pituitary).","H. pylori raises gastrin only mildly and doesn't cause refractory multiple ulcers with acid hypersecretion.","Atrophic gastritis has HIGH gastrin but LOW acid (achlorhydria) — the opposite acid state.","Outlet obstruction doesn't cause hypergastrinaemia with high acid."]},
+  dd:{fast:"Refractory/multiple ulcers + diarrhoea + high gastrin + LOW pH = gastrinoma (ZES). High gastrin + HIGH pH = atrophic gastritis or PPI use.",
+   pattern:"Secretin stimulation test: gastrin paradoxically RISES in gastrinoma. MEN1 = 3 P's (Parathyroid, Pancreas, Pituitary).",
+   deep:"Gastrinomas often sit in the 'gastrinoma triangle'; localise with somatostatin-receptor imaging; high-dose PPIs control acid; resect if localised.",
+   facts:"Diarrhoea in ZES results from acid inactivating pancreatic enzymes and injuring mucosa; it improves with PPIs.",
+   bonus:"PPIs raise gastrin, so they confound the test — but never stop them for testing without specialist advice if there is bleeding risk."}},
+ {id:"sc_sah", modality:"Neurology",
+  vignette:"A 55-y man has the 'worst headache of his life' with brief loss of consciousness and neck stiffness. A CT head at 12 hours is reported normal.",
+  s2:{tag:"NEET PG", q:"Best next step?",
+   opts:["Lumbar puncture looking for xanthochromia","Discharge — a normal CT excludes a bleed","Start a triptan for migraine","Arrange an MRI brain in 2 weeks"],
+   correct:0,
+   exp:["Correct. A thunderclap headache is subarachnoid haemorrhage until excluded; CT sensitivity falls after 6 h, so a normal CT at 12 h needs an LP for xanthochromia (RBC breakdown pigment).","A normal CT after 6 h does NOT exclude SAH — an LP is required.","Treating as migraine risks missing an aneurysmal bleed.","A 2-week delay risks a fatal rebleed."]},
+  dd:{fast:"Thunderclap headache + normal late CT → LP for xanthochromia. If positive → CT angiography for the aneurysm.",
+   pattern:"SAH causes: berry aneurysm (commonest), AVM, trauma. Associations: ADPKD, Ehlers–Danlos, coarctation.",
+   deep:"Complications: rebleed, vasospasm (days 3–14, prevented with nimodipine), hydrocephalus, hyponatraemia (cerebral salt wasting). Secure the aneurysm by coiling or clipping.",
+   facts:"Xanthochromia takes ~12 h to form — an LP done too early can be falsely negative.",
+   bonus:"Nimodipine reduces vasospasm-related ischaemia and improves outcome."}},
+ {id:"sc_salicylate", modality:"Toxicology",
+  vignette:"A teenager after an overdose has tinnitus, tachypnoea and fever; ABG shows BOTH a respiratory alkalosis and a high-anion-gap metabolic acidosis.",
+  s2:{tag:"NEET PG", q:"Most likely agent and a key treatment?",
+   opts:["Salicylate (aspirin) — alkalinise the urine ± haemodialysis","Paracetamol — N-acetylcysteine","Opioid — naloxone","Benzodiazepine — flumazenil"],
+   correct:0,
+   exp:["Correct. A mixed respiratory alkalosis + high-anion-gap acidosis with tinnitus and fever is classic salicylate toxicity; alkalinise the urine (ion-trapping) and dialyse if severe.","Paracetamol overdose is initially asymptomatic then hepatotoxic, without this acid–base picture.","Opioids cause a respiratory ACIDOSIS with pinpoint pupils, not this mixed pattern.","Benzodiazepines cause sedation, not tinnitus or a mixed acid–base disorder."]},
+  dd:{fast:"Tinnitus + mixed respiratory alkalosis + high-anion-gap acidosis = aspirin. Alkalinise urine (pH >7.5); dialyse if the level is very high or there is AMS/renal failure.",
+   pattern:"Salicylates stimulate the respiratory centre (alkalosis) and uncouple oxidative phosphorylation (acidosis + fever).",
+   deep:"Avoid intubation if possible (it can worsen the acidosis); keep the serum alkaline; give glucose for neuroglycopenia even if serum glucose is normal.",
+   facts:"Dialysis indications: very high level, altered mental status, pulmonary/cerebral oedema, renal failure.",
+   bonus:"Acidaemia drives salicylate into the CNS — never let the patient become acidotic."}},
+ {id:"sc_angleclosure", modality:"Ophthalmology",
+  vignette:"A 65-y hypermetrope has a sudden painful red eye with haloes around lights, a mid-dilated non-reactive pupil, a rock-hard globe, and vomiting.",
+  s2:{tag:"INI-CET", q:"Diagnosis and immediate management?",
+   opts:["Acute angle-closure glaucoma — urgent IOP-lowering, then laser peripheral iridotomy","Acute anterior uveitis — topical steroids and cycloplegics","Bacterial conjunctivitis — topical antibiotics","Central retinal vein occlusion — observation"],
+   correct:0,
+   exp:["Correct. Painful red eye + haloes + mid-dilated fixed pupil + hard globe + vomiting = acute angle closure; lower IOP urgently (acetazolamide, topical beta-blocker/pilocarpine), then definitive laser iridotomy.","Uveitis has a small/irregular pupil and possible hypopyon, not a rock-hard globe with haloes.","Conjunctivitis is painless with discharge and a normal pupil/IOP.","CRVO is painless visual loss with fundal haemorrhages, not a hard painful eye."]},
+  dd:{fast:"Painful red eye + haloes + mid-dilated fixed pupil + hard globe = angle closure → lower IOP fast, then iridotomy.",
+   pattern:"Red-eye danger signs: pain, reduced vision, haloes, a fixed pupil, ciliary flush = angle-closure/uveitis/keratitis — not simple conjunctivitis.",
+   deep:"Precipitants: dim light, mydriatics and anticholinergics in a hypermetropic shallow-chamber eye. The fellow eye needs prophylactic iridotomy.",
+   facts:"Avoid pupil-dilating drugs in shallow anterior chambers; pilocarpine constricts the pupil and opens the angle.",
+   bonus:"Topical steroids treat uveitis but can raise IOP in steroid responders."}},
+ {id:"sc_tamponade_tr", modality:"Trauma / Surgery",
+  vignette:"After blunt chest trauma a young man becomes hypotensive with distended neck veins and muffled heart sounds; the trachea is central and breath sounds are EQUAL bilaterally.",
+  s2:{tag:"NEET PG", q:"Most likely diagnosis and immediate action?",
+   opts:["Cardiac tamponade — pericardiocentesis / emergency thoracotomy","Tension pneumothorax — needle decompression","Massive haemothorax — chest drain","Neurogenic shock — atropine"],
+   correct:0,
+   exp:["Correct. Beck's triad (hypotension, raised JVP, muffled heart sounds) with EQUAL breath sounds and a central trachea = tamponade → drain the pericardium.","Tension pneumothorax has ABSENT breath sounds and tracheal deviation to the opposite side.","Massive haemothorax has reduced breath sounds with dullness, and the JVP is usually LOW.","Neurogenic shock causes hypotension with bradycardia and warm peripheries, not raised JVP/muffled sounds."]},
+  dd:{fast:"Beck's triad + equal breath sounds = tamponade (drain the pericardium). Absent breath sounds + tracheal shift = tension pneumothorax (needle decompress).",
+   pattern:"Obstructive shock: tamponade, tension pneumothorax, massive PE. Separate them by breath sounds, JVP, trachea and eFAST.",
+   deep:"Even a small acute effusion causes tamponade (the pericardium can't stretch quickly). Pulsus paradoxus and electrical alternans are clues; echo shows RA/RV diastolic collapse.",
+   facts:"eFAST rapidly detects pericardial fluid in trauma; definitive treatment is often a surgical pericardial window.",
+   bonus:"Kussmaul sign (JVP rising on inspiration) reflects constriction/tamponade physiology."}},
+ {id:"sc_rr", modality:"Epidemiology",
+  vignette:"In an outbreak cohort study, the risk of illness is 40% among the exposed and 10% among the unexposed.",
+  s2:{tag:"UPSC CMS", q:"The relative risk and attributable risk are:",
+   opts:["RR 4, attributable risk 30%","RR 0.25, attributable risk 30%","RR 4, attributable risk 40%","RR 30, attributable risk 4%"],
+   correct:0,
+   exp:["Correct. RR = 40%/10% = 4; attributable risk = 40%−10% = 30% (the excess risk from exposure).","RR is exposed/unexposed = 4, not 0.25.","Attributable risk subtracts the baseline (40−10 = 30), not 40.","This mixes the values — RR is 4 and AR is 30%."]},
+  dd:{fast:"RR = risk(exposed)/risk(unexposed). Attributable risk = risk(exposed) − risk(unexposed), the absolute excess.",
+   pattern:"Cohort → RR & attributable risk. Case-control → odds ratio. RR >1 harmful, <1 protective.",
+   deep:"Attributable-risk percent = (RR−1)/RR = 75% here (the fraction of disease in the exposed due to exposure). Population attributable risk also factors in exposure prevalence.",
+   facts:"Number needed to harm = 1/AR = 1/0.30 ≈ 3.3.",
+   bonus:"The odds ratio approximates the RR only when the disease is rare."}},
+ {id:"sc_cdiff", modality:"Microbiology",
+  vignette:"A hospitalised patient on broad-spectrum antibiotics develops profuse watery diarrhoea; the stool toxin is positive and colonoscopy shows yellow pseudomembranes.",
+  s2:{tag:"NEET PG", q:"Organism and first-line treatment?",
+   opts:["Clostridioides difficile — oral vancomycin or fidaxomicin","C. difficile — oral metronidazole is now preferred first-line in all cases","Norovirus — supportive care only","Salmonella — ciprofloxacin"],
+   correct:0,
+   exp:["Correct. Antibiotic-associated pseudomembranous colitis = C. difficile; current first-line is oral vancomycin or fidaxomicin, and the offending antibiotic is stopped.","Metronidazole is no longer preferred first-line (inferior cure rates) except when other agents are unavailable.","Norovirus doesn't form pseudomembranes or a positive C. difficile toxin.","Salmonella causes invasive diarrhoea, not pseudomembranes, and antibiotics are often avoided in simple cases."]},
+  dd:{fast:"Antibiotics + watery diarrhoea + pseudomembranes + toxin = C. difficile → oral vancomycin/fidaxomicin; stop the culprit antibiotic.",
+   pattern:"High-risk antibiotics: clindamycin, cephalosporins, fluoroquinolones. Severe/fulminant → oral vancomycin + IV metronidazole ± surgery.",
+   deep:"Diagnose with GDH + toxin or NAAT. Recurrences are common — faecal microbiota transplant helps multiple recurrences. Isolate the patient; spores resist alcohol, so wash hands with soap and water.",
+   facts:"Avoid anti-motility agents (risk of toxic megacolon). Toxins A and B damage the colonic mucosa.",
+   bonus:"Alcohol gel does not kill spores — soap-and-water hand hygiene is essential."}},
+ {id:"sc_addison", modality:"Endocrine emergency",
+  vignette:"A 50-y with known Addison disease misses steroids during a flu and presents hypotensive, hyponatraemic, hyperkalaemic, hypoglycaemic and drowsy.",
+  s2:{tag:"NEET PG", q:"Immediate management?",
+   opts:["IV hydrocortisone + IV normal saline + treat the hypoglycaemia","IV insulin and dextrose for the hyperkalaemia first","Oral fludrocortisone is sufficient","Vasopressors alone"],
+   correct:0,
+   exp:["Correct. An Addisonian crisis needs immediate IV hydrocortisone, aggressive IV normal saline and glucose, plus treatment of the precipitant — this corrects the electrolytes and blood pressure.","The hyperkalaemia resolves with hydrocortisone and fluids; insulin–dextrose isn't the primary fix and delays steroids.","Oral fludrocortisone is too slow/inadequate in a crisis — IV hydrocortisone is needed.","Vasopressors without steroids fail — this shock is steroid-responsive."]},
+  dd:{fast:"Addisonian crisis = IV hydrocortisone + saline + glucose now. Don't wait for the cortisol result.",
+   pattern:"Addison labs: low Na, high K, low glucose, high ACTH; a short Synacthen test confirms. Triggers: infection, missed steroids, surgery.",
+   deep:"Chronic replacement uses hydrocortisone + fludrocortisone with sick-day rules (double the steroid dose). Patients should carry a steroid card and an emergency injection.",
+   facts:"Primary (Addison) vs secondary: secondary spares mineralocorticoid (normal K, no hyperpigmentation).",
+   bonus:"Give stress-dose steroids before surgery in anyone with adrenal insufficiency."}},
+ {id:"sc_pe", modality:"Respiratory",
+  vignette:"A 30-y woman has dyspnoea and pleuritic chest pain 3 weeks after a long flight; HR 110, lungs clear, SpO₂ 92%. Her Wells score is high.",
+  s2:{tag:"UPSC CMS", q:"Best immediate step?",
+   opts:["Start therapeutic anticoagulation and arrange CT pulmonary angiography","Do a D-dimer first; if negative, no imaging is needed","Chest X-ray to confirm the PE","Reassure — clear lungs exclude a PE"],
+   correct:0,
+   exp:["Correct. A high pre-test probability PE means you do NOT rely on D-dimer — start anticoagulation (unless contraindicated) and confirm with CTPA.","D-dimer is only useful to rule OUT in low/intermediate probability; a negative result doesn't exclude a high-probability PE.","A chest X-ray is often normal in PE and cannot confirm it.","Clear lungs are typical of PE and do not exclude it."]},
+  dd:{fast:"High Wells PE → anticoagulate + CTPA. Low Wells → D-dimer to rule out. Never use D-dimer to 'exclude' a high-probability PE.",
+   pattern:"PE signs: sinus tachycardia (commonest ECG finding), S1Q3T3 (classic but uncommon), right-heart strain. Massive PE + hypotension → thrombolysis.",
+   deep:"Distinguish provoked (surgery, flight, OCP) from unprovoked (screen for thrombophilia/malignancy). Anticoagulate for ≥3 months, longer if unprovoked/recurrent.",
+   facts:"In pregnancy or with contrast issues, a V/Q scan is an alternative to CTPA.",
+   bonus:"Haemodynamic instability (massive PE) is an indication for thrombolysis or embolectomy."}},
+ {id:"sc_anaphylaxis", modality:"Emergency medicine",
+  vignette:"Minutes after starting an antibiotic infusion a patient develops widespread urticaria, lip and tongue swelling, wheeze and a BP of 80/50.",
+  s2:{tag:"NEET PG", q:"The single most important first drug — with its dose and route — is:",
+   opts:["Intramuscular adrenaline 0.5 mg (0.5 mL of 1:1000) into the anterolateral thigh","Intravenous adrenaline 1 mg bolus","IV hydrocortisone as the first-line life-saving drug","IV chlorphenamine (antihistamine) alone"],
+   correct:0,
+   exp:["Correct. Anaphylaxis → IM adrenaline into the anterolateral thigh is first-line and life-saving; repeat every 5 minutes as needed, with oxygen, IV fluids and supine positioning.","An IV 1 mg bolus risks a fatal arrhythmia — IV adrenaline is only for cardiac arrest or refractory shock, diluted and titrated by specialists.","Steroids are slow and adjunctive — never delay adrenaline for them.","Antihistamines ease urticaria but don't treat the airway or shock; adrenaline is the priority."]},
+  dd:{fast:"Anaphylaxis = IM adrenaline (thigh) FIRST, every time. Then oxygen, IV fluids, lie flat; antihistamine and steroid are adjuncts only.",
+   pattern:"Adult 0.5 mg IM (1:1000); child 0.3/0.15 mg by age. Repeat at 5 minutes. Biphasic reactions can recur hours later — observe.",
+   deep:"Mechanism: IgE-mediated mast-cell degranulation. Refractory cases → IV adrenaline infusion; give glucagon if the patient is on a beta-blocker. Serum tryptase confirms the episode retrospectively.",
+   facts:"Beta-blocked patients can be adrenaline-resistant — glucagon helps. Discharge with an adrenaline auto-injector and an allergy referral.",
+   bonus:"IM into the thigh gives faster, more reliable absorption than subcutaneous or deltoid injection."}}
+];
+
+/* ============================================================
+   VIDEOS — 10 curated YouTube clinical clips + hard MCQs.
+   Video IDs sourced from search; verify/swap before going live.
+   ============================================================ */
+const VIDEOS = [
+ {id:"vid_parkinson", modality:"Video · Neurology", video:"EQ0HG16EC3g",
+  vignette:"Watch the gait, then answer. The clip shows a shuffling, festinating gait with reduced arm swing and difficulty turning.",
+  s2:{tag:"NEET PG", q:"The core neurotransmitter defect and the FIRST-line drug are:",
+   opts:["Dopamine deficiency (substantia nigra) → levodopa–carbidopa","Acetylcholine excess → donepezil","GABA deficiency → baclofen","Dopamine excess → haloperidol"],
+   correct:0,
+   exp:["Correct. Parkinsonism is loss of nigrostriatal dopaminergic neurons; levodopa with a decarboxylase inhibitor (carbidopa) is most effective.","There is a relative cholinergic excess, but the primary defect is dopamine loss; donepezil treats Alzheimer's.","This is not a GABA problem; baclofen treats spasticity.","Dopamine is DEFICIENT; haloperidol (a D2 blocker) worsens parkinsonism."]},
+  dd:{fast:"Festinating shuffling gait + reduced arm swing + pill-rolling tremor + rigidity = Parkinsonism → dopamine loss → levodopa.",
+   pattern:"TRAP: Tremor (resting, pill-rolling), Rigidity (cogwheel), Akinesia/bradykinesia, Postural instability. Lewy bodies contain α-synuclein.",
+   deep:"Levodopa gives the best symptom control but causes long-term dyskinesias. Alternatives: dopamine agonists, MAO-B inhibitors. Drug-induced parkinsonism (antipsychotics, metoclopramide) is common — always review medications.",
+   facts:"Parkinson-plus syndromes respond poorly to levodopa: PSP (vertical gaze palsy), MSA (autonomic failure), CBD.",
+   bonus:"Asymmetric onset favours idiopathic Parkinson's; drug-induced parkinsonism is usually symmetric."}},
+ {id:"vid_cerebellar", modality:"Video · Neurology", video:"ZVj5uEUrER0",
+  vignette:"Watch the gait. It is broad-based, unsteady and veering, and it worsens on turning.",
+  s2:{tag:"INI-CET", q:"This gait localises to the:",
+   opts:["Cerebellum","Dorsal columns (sensory ataxia)","Basal ganglia","Upper motor neuron (pyramidal tract)"],
+   correct:0,
+   exp:["Correct. A broad-based, staggering, 'drunken' gait that worsens on turning and is not vision-dependent = cerebellar ataxia (midline vermis).","Sensory (dorsal-column) ataxia is worse with the eyes closed (Romberg positive) and improves with vision.","Basal-ganglia disease gives a shuffling/festinating gait or chorea, not this broad-based pattern.","Pyramidal lesions give a spastic/scissoring or circumducting gait, not cerebellar staggering."]},
+  dd:{fast:"Broad-based veering gait, worse on turning, not vision-dependent = cerebellar. Romberg-positive (worse with eyes shut) = sensory/dorsal-column.",
+   pattern:"Cerebellar signs = DANISH: Dysdiadochokinesia, Ataxia, Nystagmus, Intention tremor, Slurred/scanning speech, Hypotonia.",
+   deep:"Vermis lesions cause truncal/gait ataxia; hemisphere lesions cause ipsilateral limb ataxia. Causes: stroke, MS, alcohol, tumour, hereditary (Friedreich).",
+   facts:"Cerebellar signs are IPSILATERAL to the lesion. Alcohol classically damages the anterior vermis (gait ataxia).",
+   bonus:"Friedreich ataxia: ataxia + absent reflexes + upgoing plantars + cardiomyopathy (GAA repeat, frataxin gene)."}},
+ {id:"vid_gowers", modality:"Video · Paediatrics", video:"fwMRWrSVxVw",
+  vignette:"The boy 'climbs up his own legs' with his hands to get from the floor to standing (Gowers sign).",
+  s2:{tag:"FMGE", q:"The inheritance pattern and the defective protein are:",
+   opts:["X-linked recessive; dystrophin deficiency","Autosomal dominant; collagen defect","Autosomal recessive; frataxin","Mitochondrial; complex I"],
+   correct:0,
+   exp:["Correct. Gowers sign reflects proximal (pelvic-girdle) weakness — Duchenne muscular dystrophy, X-linked recessive, with absent dystrophin.","DMD is X-linked, not autosomal dominant, and the protein is dystrophin, not collagen.","Frataxin is Friedreich ataxia, not DMD.","DMD is not a mitochondrial disorder."]},
+  dd:{fast:"Boy + Gowers sign + calf pseudohypertrophy + very high CK = Duchenne (X-linked, dystrophin absent).",
+   pattern:"DMD (absent dystrophin, frameshift) vs Becker (reduced dystrophin, in-frame, milder). Both X-linked; CK is markedly raised.",
+   deep:"Presents at 2–5 y with proximal weakness, a waddling gait and calf pseudohypertrophy; wheelchair by ~12 y; dilated cardiomyopathy. Steroids slow progression.",
+   facts:"Female carriers can have a raised CK and cardiomyopathy. Genetic testing confirms deletions.",
+   bonus:"Becker is milder with later onset because the reading frame is preserved."}},
+ {id:"vid_ino", modality:"Video · Neuro-ophthalmology", video:"tIOyFsBwUuY",
+  vignette:"On attempted horizontal gaze the adducting eye fails to cross the midline while the abducting eye shows nystagmus; convergence is preserved.",
+  s2:{tag:"NEET PG", q:"The lesion is in the:",
+   opts:["Medial longitudinal fasciculus (MLF)","Oculomotor (CN III) nucleus","Abducens nerve (CN VI) alone","Optic chiasm"],
+   correct:0,
+   exp:["Correct. Internuclear ophthalmoplegia = an MLF lesion disconnecting the CN VI nucleus from the contralateral CN III → impaired adduction with abducting-eye nystagmus; bilateral INO in a young person suggests MS.","A CN III lesion causes ptosis, a 'down-and-out' eye and a dilated pupil — and convergence would be affected.","A CN VI palsy impairs ABduction, not adduction.","Chiasmal lesions cause a bitemporal hemianopia, not INO."]},
+  dd:{fast:"Failed adduction + abducting nystagmus with intact convergence = INO = MLF. Bilateral + young = MS; older = brainstem stroke.",
+   pattern:"One-and-a-half syndrome = INO + an ipsilateral horizontal gaze palsy (MLF + PPRF/CN VI nucleus).",
+   deep:"Convergence is preserved in INO because the CN III nucleus itself is intact — this distinguishes it from a third-nerve palsy.",
+   facts:"MS is the classic cause of bilateral INO in the young; a lacunar brainstem infarct in the elderly.",
+   bonus:"WEBINO = wall-eyed bilateral INO (bilateral exotropia plus INO)."}},
+ {id:"vid_bppv", modality:"Video · ENT", video:"-6sE6AZqgK8",
+  vignette:"During the Dix–Hallpike manoeuvre the patient develops transient upbeating-torsional nystagmus with a short latency and fatigability.",
+  s2:{tag:"FMGE", q:"Diagnosis and treatment?",
+   opts:["Posterior-canal BPPV → Epley (canalith-repositioning) manoeuvre","Vestibular neuritis → steroids","Ménière disease → salt restriction/diuretics","Central vertigo → MRI and anticoagulation"],
+   correct:0,
+   exp:["Correct. Positional torsional-upbeat nystagmus with latency, fatigability and brief duration = posterior-canal BPPV → the Epley manoeuvre repositions the otoconia.","Vestibular neuritis causes constant (not positional) vertigo lasting days with unidirectional nystagmus.","Ménière disease has episodic vertigo with fluctuating hearing loss and tinnitus, not brief positional nystagmus.","Central nystagmus is non-fatigable, direction-changing and without latency; this pattern is benign/peripheral."]},
+  dd:{fast:"Positional, latent, fatigable torsional-upbeat nystagmus = posterior-canal BPPV → Epley. No hearing loss.",
+   pattern:"Peripheral (BPPV/neuritis): fatigable, unidirectional, suppressed by fixation. Central: non-fatigable, direction-changing, vertical.",
+   deep:"BPPV is displaced otoconia in (usually the posterior) semicircular canal. Epley repositions them; recurrence is common. Vestibular sedatives are only short-term.",
+   facts:"The HINTS exam separates central from peripheral acute vertigo — a central pattern needs urgent imaging.",
+   bonus:"Horizontal-canal BPPV is tested with the supine roll test and treated with the Lempert (barbecue) roll."}},
+ {id:"vid_chorea", modality:"Video · Paediatrics", video:"wTCnbga3sqg",
+  vignette:"This child has rapid, irregular, non-repetitive involuntary movements (chorea) that began weeks after a sore throat.",
+  s2:{tag:"NEET PG", q:"The underlying condition and the criterion it satisfies are:",
+   opts:["Rheumatic fever — Sydenham chorea is a MAJOR Jones criterion","Huntington disease — CAG trinucleotide repeat","Wilson disease — copper deposition","Cerebral palsy — perinatal brain injury"],
+   correct:0,
+   exp:["Correct. Post-streptococcal Sydenham chorea is a major Jones criterion for acute rheumatic fever; look for carditis/arthritis and give penicillin prophylaxis.","Huntington is adult-onset chorea with dementia and a family history, not a post-strep illness in a child.","Wilson causes chorea/dystonia but with a KF ring and liver disease, not a post-strep story.","Cerebral palsy is a non-progressive perinatal injury, not acute post-strep chorea."]},
+  dd:{fast:"Child + post-strep chorea = Sydenham = major Jones criterion for rheumatic fever → penicillin prophylaxis and check the heart.",
+   pattern:"Jones major criteria (JONES): Joints (migratory polyarthritis), ⊙ carditis, Nodules, Erythema marginatum, Sydenham chorea.",
+   deep:"Sydenham chorea is a late manifestation (weeks–months) via anti-neuronal antibodies acting on the basal ganglia; it is self-limiting but signals rheumatic heart disease risk and the need for long-term penicillin.",
+   facts:"Chorea can be the sole manifestation of rheumatic fever. Milkmaid grip and hung-up reflexes are clues.",
+   bonus:"Erythema marginatum and subcutaneous nodules indicate severe rheumatic activity/carditis."}},
+ {id:"vid_asterixis", modality:"Video · Gastroenterology", video:"JZ4F9Z2W0kE",
+  vignette:"With the arms outstretched and wrists extended, a jaundiced patient's hands show sudden brief 'flaps' (asterixis).",
+  s2:{tag:"UPSC CMS", q:"This indicates and is best managed by:",
+   opts:["Hepatic encephalopathy → lactulose (± rifaximin) and treat the precipitant","Cerebellar disease → thiamine only","Parkinsonism → levodopa","A simple resting tremor → a beta-blocker"],
+   correct:0,
+   exp:["Correct. Asterixis is a negative myoclonus of hepatic encephalopathy (also uraemia and CO₂ retention); lactulose lowers ammonia and you must find the precipitant (GI bleed, infection, constipation).","Cerebellar disease gives an intention tremor and ataxia, not a flapping negative myoclonus.","Parkinsonian tremor is a resting pill-rolling tremor, not a posture-dependent flap.","Essential tremor is a fine action tremor; this is metabolic, not treated with a beta-blocker."]},
+  dd:{fast:"Outstretched hands that flap = asterixis = metabolic (hepatic > uraemic/CO₂). In liver disease → lactulose + rifaximin + treat the trigger.",
+   pattern:"Hepatic-encephalopathy triggers: GI bleed, infection/SBP, constipation, sedatives, hypokalaemia, dehydration, high protein load.",
+   deep:"Ammonia crosses into the brain → astrocyte swelling. Grade with the West Haven criteria; titrate lactulose to 2–3 soft stools/day; rifaximin reduces ammonia-producing gut flora.",
+   facts:"Asterixis is bilateral in metabolic causes; UNILATERAL asterixis suggests a focal brain lesion.",
+   bonus:"Avoid over-sedation — benzodiazepines can precipitate encephalopathy."}},
+ {id:"vid_mg", modality:"Video · Neurology", video:"KcNrE2PWY1U",
+  vignette:"A patient has fatigable ptosis (droopy lids worsening on sustained up-gaze) that IMPROVES after a 2-minute ice pack on the lid.",
+  s2:{tag:"INI-CET", q:"Diagnosis, antibody and a key caution:",
+   opts:["Myasthenia gravis (anti-AChR) — screen for thymoma and avoid drugs that worsen it","Lambert–Eaton syndrome — strength improves with rest","Third-nerve palsy — pupil-involving","Horner syndrome — miosis with ptosis"],
+   correct:0,
+   exp:["Correct. Fatigable ptosis improving with cooling (positive ice-pack test) = myasthenia gravis (anti-AChR, sometimes anti-MuSK); associated with thymoma/thymic hyperplasia, and many drugs (aminoglycosides, beta-blockers) worsen it.","Lambert–Eaton (anti-VGCC) strength IMPROVES with repeated effort and is paraneoplastic (small-cell lung cancer); ptosis is not the hallmark.","A CN III palsy gives fixed ptosis with a 'down-and-out' dilated pupil, not fatigability.","Horner's has partial ptosis with miosis and anhidrosis, not ice-responsive fatigable ptosis."]},
+  dd:{fast:"Fatigable ptosis better with ice = myasthenia (anti-AChR). Cooling slows acetylcholinesterase, leaving more ACh. Image the thymus.",
+   pattern:"MG: fatigable, worse with activity, ocular onset. LEMS: improves with activity, autonomic features, small-cell lung cancer, anti-VGCC.",
+   deep:"Treat with pyridostigmine and immunosuppression; thymectomy for thymoma or generalised disease. A myasthenic crisis (respiratory failure) needs IVIG or plasma exchange.",
+   facts:"Drugs that worsen MG: aminoglycosides, fluoroquinolones, beta-blockers, magnesium, penicillamine.",
+   bonus:"The edrophonium (Tensilon) test is largely historical; the ice-pack test and serology are preferred."}},
+ {id:"vid_absence", modality:"Video · Neurology (EEG)", video:"llmsAsMsjwA",
+  vignette:"A child has brief staring spells provoked by hyperventilation; the EEG shows generalised 3-Hz spike-and-wave discharges.",
+  s2:{tag:"NEET PG", q:"First-line drug and one to AVOID:",
+   opts:["Ethosuximide (or valproate); AVOID carbamazepine (it worsens absences)","Carbamazepine; avoid ethosuximide","Phenytoin; avoid valproate","Vigabatrin; avoid ethosuximide"],
+   correct:0,
+   exp:["Correct. Childhood absence epilepsy (3-Hz spike-wave) responds to ethosuximide (or valproate); carbamazepine, phenytoin and gabapentin can WORSEN absences.","Carbamazepine aggravates absence seizures — the opposite of first-line.","Phenytoin is not used for absence and can worsen it; valproate is actually effective.","Vigabatrin (for infantile spasms) is not first-line and can worsen absences."]},
+  dd:{fast:"Brief staring, hyperventilation-provoked, 3-Hz spike-wave = childhood absence → ethosuximide/valproate. Avoid carbamazepine/phenytoin.",
+   pattern:"Absence seizures have NO aura or post-ictal state (unlike focal seizures) and are provoked by hyperventilation; prognosis is good and they often remit.",
+   deep:"Ethosuximide blocks thalamic T-type calcium channels. Choose valproate if generalised tonic–clonic seizures coexist; avoid valproate where possible in females of childbearing potential (teratogenic).",
+   facts:"Ethosuximide has NO effect on tonic–clonic seizures — pick valproate when both types coexist.",
+   bonus:"Juvenile myoclonic epilepsy: early-morning myoclonus + GTCS, valproate-responsive, usually lifelong."}},
+ {id:"vid_tamponade", modality:"Video · Cardiology (Echo)", video:"tokryY1koxE",
+  vignette:"The echo shows a large pericardial effusion with the heart 'swinging' within it and diastolic collapse of the right-sided chambers.",
+  s2:{tag:"UPSC CMS", q:"The classic bedside sign and immediate treatment are:",
+   opts:["Pulsus paradoxus; urgent pericardiocentesis","Pulsus bisferiens; a beta-blocker","Water-hammer pulse; diuretics alone","Pulsus alternans; thrombolysis"],
+   correct:0,
+   exp:["Correct. Tamponade shows a swinging heart with RA/RV diastolic collapse; the classic sign is pulsus paradoxus (>10 mmHg inspiratory fall in systolic BP); treat by draining the pericardium.","Pulsus bisferiens occurs in aortic regurgitation/HOCM, not tamponade.","A water-hammer pulse is aortic regurgitation; diuretics worsen tamponade by dropping preload.","Pulsus alternans suggests severe LV failure; thrombolysis is not tamponade therapy."]},
+  dd:{fast:"Swinging heart + RA/RV diastolic collapse + pulsus paradoxus = tamponade → pericardiocentesis. Avoid diuretics/vasodilators.",
+   pattern:"Beck's triad: hypotension, raised JVP, muffled heart sounds. ECG: low voltage with electrical alternans.",
+   deep:"Tamponade is a clinical diagnosis supported by echo and is preload-dependent — give fluids while arranging drainage and treat the cause (malignancy, uraemia, TB, trauma).",
+   facts:"Kussmaul sign is more typical of constrictive pericarditis; pulsus paradoxus of tamponade.",
+   bonus:"Electrical alternans is beat-to-beat QRS amplitude variation caused by the swinging heart."}}
+];
+
+/* ============================================================
    APP LOGIC
    ============================================================ */
 const KEYS = ["A","B","C","D"];
 const app = document.getElementById("app");
-let idx = 0;                 // current station
-let firstTryCorrect = 0;     // score: stations where BOTH stages solved without a wrong click
+
+const MODES = {
+  images:   {name:"Image Stations",    deck:()=>DATA,       noun:"image"},
+  scenarios:{name:"Clinical Scenarios",deck:()=>SCENARIOS,  noun:"case"},
+  videos:   {name:"Video Cases",       deck:()=>VIDEOS,     noun:"clip"}
+};
+
+let curMode = null;
+let deck = [];
+let idx = 0;
+let firstTryCorrect = 0;
 let solvedStations = 0;
-let stationErr = false;      // any wrong click on current station
-let RTs1 = null, RTs2 = null; // runtime shuffled state for the current station
+let stationErr = false;
+let solvedSet = new Set();
+let RTs1 = null, RTs2 = null;
 
 function shuffleOrder(n){
   const a=[...Array(n).keys()];
   for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
-// Shuffle a question's options while keeping the aligned feedback (hints/exp) and correct index in sync.
+// Shuffle options while keeping aligned feedback (hints/exp) and the correct index in sync.
 function buildQ(src, fbKey){
   const order = shuffleOrder(src.opts.length);
-  return {
-    opts: order.map(i=>src.opts[i]),
-    fb: order.map(i=>src[fbKey][i]),
-    correct: order.indexOf(src.correct)
-  };
+  return { opts:order.map(i=>src.opts[i]), fb:order.map(i=>src[fbKey][i]), correct:order.indexOf(src.correct) };
 }
+// Use the harder override question for image stations when available.
+function q2of(d){ return (curMode==='images' && typeof HARDS2!=='undefined' && HARDS2[d.id]) ? HARDS2[d.id] : d.s2; }
 
+/* ---------- Home menu ---------- */
 function startScreen(){
   app.innerHTML = `
-   <section class="screen">
-     <div class="ring">${DATA.length}</div>
-     <h2>Ready to spot & solve?</h2>
-     <p>Each station gives you a real clinical image. Work through it in three moves:</p>
-     <div class="how">
-       <div class="step"><div class="n">1</div><div><b>Spot it</b><span>Pick what the image shows. Wrong guess? You get a hint on what to look for — then try again.</span></div></div>
-       <div class="step"><div class="n">2</div><div><b>Solve it</b><span>An exam-level MCQ, tagged to the exam. Every wrong option tells you exactly why it's wrong.</span></div></div>
-       <div class="step"><div class="n">3</div><div><b>Master it</b><span>Unlock 4 cards: fast solve, pattern, deep dive, and key & rare facts.</span></div></div>
+   <section class="screen" style="text-align:left">
+     <h2 style="text-align:center">Pick your practice mode</h2>
+     <p style="text-align:center">Three ways to train — spot-diagnosis images, brutal clinical vignettes, and real video cases. Every question is built at exam-topper difficulty.</p>
+     <div class="menu">
+       <button class="mode-card" onclick="startMode('images')">
+         <span class="mc-ic mc-img">🔬</span>
+         <span class="mc-b"><h3>Image Stations</h3><p>Spot the clinical image, then a hard tagged MCQ + mastery cards.</p></span>
+         <span class="mc-n">${DATA.length}</span></button>
+       <button class="mode-card" onclick="startMode('scenarios')">
+         <span class="mc-ic mc-sce">🧠</span>
+         <span class="mc-b"><h3>Clinical Scenarios</h3><p>Exam-style vignettes across every subject — think hard.</p></span>
+         <span class="mc-n">${SCENARIOS.length}</span></button>
+       <button class="mode-card" onclick="startMode('videos')">
+         <span class="mc-ic mc-vid">🎬</span>
+         <span class="mc-b"><h3>Video Cases</h3><p>Watch a real clinical clip, then diagnose and manage.</p></span>
+         <span class="mc-n">${VIDEOS.length}</span></button>
      </div>
-     <button class="btn btn-primary" onclick="begin()">Start practising →</button>
    </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function begin(){ idx=0; firstTryCorrect=0; solvedStations=0; renderStation(); }
+function startMode(key){
+  curMode = key;
+  deck = MODES[key].deck();
+  idx = 0; firstTryCorrect = 0; solvedStations = 0; solvedSet = new Set();
+  renderStation();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+// "Practise again" restarts the current mode.
+function begin(){ if(curMode) startMode(curMode); else startScreen(); }
 
 function progressHTML(){
-  const pct = Math.round((idx)/DATA.length*100);
+  const pct = Math.round((idx)/deck.length*100);
   return `
-   <div class="bar-row">
-     <div class="pbar"><i style="width:${pct}%"></i></div>
-   </div>
+   <div class="bar-row"><div class="pbar"><i style="width:${pct}%"></i></div></div>
    <div class="meta">
-     <span>Station ${idx+1} of ${DATA.length}</span>
+     <span>${MODES[curMode].name} · ${idx+1} of ${deck.length}</span>
      <span class="score-chip">Clean solves: ${firstTryCorrect}</span>
    </div>`;
 }
 
+function mediaHTML(d){
+  if(d.img)   return `<div class="imgwrap"><span class="imgtag">${d.modality}</span><img src="${d.img}" alt="clinical image" /></div>`;
+  if(d.video) return `<div class="videowrap"><iframe src="https://www.youtube-nocookie.com/embed/${d.video}" title="${d.modality}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+     <a class="watchlink" href="https://youtu.be/${d.video}" target="_blank" rel="noopener">▶ Watch on YouTube if the clip doesn't load</a>`;
+  return "";
+}
+
 function renderStation(){
-  const d = DATA[idx];
+  const d = deck[idx];
   stationErr = false;
+  const media = mediaHTML(d);
+  const vig = d.vignette ? `<div class="vignette">${d.vignette}</div>` : "";
+  const subj = (!d.s1 && d.modality) ? `<span class="subjbadge">${d.modality}</span>` : "";
   app.innerHTML = `
    ${progressHTML()}
    <section class="card">
-     <div class="imgwrap">
-       <span class="imgtag">${d.modality}</span>
-       <img src="${d.img}" alt="clinical image" />
-     </div>
-
-     <div id="stage1">
+     ${media}
+     ${subj}
+     ${vig}
+     <div id="stage1"></div>
+     <div id="stage2" class="hidden"></div>
+     <div id="stage3" class="hidden"></div>
+   </section>`;
+  if(d.s1){
+    RTs1 = buildQ(d.s1, "hints");
+    document.getElementById("stage1").innerHTML = `
        <div class="stagehead"><span class="stagebadge">Step 1 · Spot it</span></div>
        <div class="q">${d.s1.q}</div>
        <div class="opts" id="s1opts"></div>
        <div id="s1fb"></div>
        <div class="actions hidden" id="s1next">
          <button class="btn btn-primary" onclick="showStage2()">Next: the exam question →</button>
-       </div>
-     </div>
-
-     <div id="stage2" class="hidden"></div>
-     <div id="stage3" class="hidden"></div>
-   </section>`;
-  RTs1 = buildQ(d.s1, "hints");
-  renderOpts("s1opts", RTs1.opts, (i,btn)=>answerS1(i,btn));
+       </div>`;
+    renderOpts("s1opts", RTs1.opts, (i,btn)=>answerS1(i,btn));
+  } else {
+    showStage2();
+  }
 }
 
 function renderOpts(containerId, opts, cb){
@@ -864,7 +1373,7 @@ function renderOpts(containerId, opts, cb){
   });
 }
 
-/* ---- Stage 1: spot the image ---- */
+/* ---- Stage 1: spot the image (image mode only) ---- */
 function answerS1(i, btn){
   if(btn.classList.contains("wrong")) return;
   if(i === RTs1.correct){
@@ -884,23 +1393,24 @@ function answerS1(i, btn){
 
 /* ---- Stage 2: hard exam MCQ ---- */
 function showStage2(){
-  const d = DATA[idx];
+  const d = deck[idx];
+  const Q = q2of(d);
   const s = document.getElementById("stage2");
   s.classList.remove("hidden");
   s.innerHTML = `
      <div class="stagehead">
-       <span class="stagebadge">Step 2 · Solve it</span>
-       <span class="examtag">Exam-level · ${d.s2.tag}</span>
+       <span class="stagebadge">${d.s1 ? "Step 2 · Solve it" : "Exam question"}</span>
+       <span class="examtag">Exam-level · ${Q.tag}</span>
      </div>
-     <div class="q">${d.s2.q}</div>
+     <div class="q">${Q.q}</div>
      <div class="opts" id="s2opts"></div>
      <div id="s2fb"></div>
      <div class="actions hidden" id="s2next">
        <button class="btn btn-primary" onclick="showStage3()">Unlock the mastery cards →</button>
      </div>`;
-  RTs2 = buildQ(d.s2, "exp");
+  RTs2 = buildQ(Q, "exp");
   renderOpts("s2opts", RTs2.opts, (i,btn)=>answerS2(i,btn));
-  s.scrollIntoView({behavior:"smooth", block:"start"});
+  if(d.s1) s.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function answerS2(i, btn){
@@ -922,17 +1432,17 @@ function answerS2(i, btn){
 
 /* ---- Stage 3: mastery deep-dive ---- */
 function showStage3(){
-  const d = DATA[idx];
-  if(!stationErr) firstTryCorrect++;
-  solvedStations++;
+  const d = deck[idx];
+  if(!solvedSet.has(idx)){ solvedSet.add(idx); solvedStations++; if(!stationErr) firstTryCorrect++; }
   const s = document.getElementById("stage3");
   s.classList.remove("hidden");
-  const last = idx === DATA.length-1;
+  const last = idx === deck.length-1;
+  const nextLabel = last ? "Finish & see score 🎉" : `Next ${MODES[curMode].noun} →`;
   s.innerHTML = `
      <div class="dd">
-       <div class="stagehead"><span class="stagebadge">Step 3 · Master it</span></div>
-       <p class="dd-title">🎯 You cracked it — lock in the concept</p>
-       <p class="dd-sub">Four ways to own this image in the exam.</p>
+       <div class="stagehead"><span class="stagebadge">Master it</span></div>
+       <p class="dd-title">🎯 You nailed it — lock in the concept</p>
+       <p class="dd-sub">Four ways to own this in the exam.</p>
        <div class="dd-grid">
          <div class="tile t-fast"><div class="th"><span class="ic">⚡</span>Solve it fast</div><p>${d.dd.fast}</p></div>
          <div class="tile t-pat"><div class="th"><span class="ic">🧩</span>The pattern</div><p>${d.dd.pattern}</p></div>
@@ -942,8 +1452,9 @@ function showStage3(){
        </div>
        <div class="navrow">
          ${idx>0?`<button class="btn btn-ghost" onclick="prevStation()">← Previous</button>`:``}
-         <button class="btn btn-primary" onclick="${last?'endScreen()':'nextStation()'}">${last?'Finish & see score 🎉':'Next image →'}</button>
+         <button class="btn btn-primary" onclick="${last?'endScreen()':'nextStation()'}">${nextLabel}</button>
        </div>
+       <button class="btn btn-ghost backbtn" onclick="startScreen()">☰ Back to menu</button>
      </div>`;
   s.scrollIntoView({behavior:"smooth", block:"start"});
 }
@@ -955,22 +1466,22 @@ function disableGroup(id, correctIdx){
   });
 }
 
-function nextStation(){ if(idx<DATA.length-1){ idx++; renderStation(); window.scrollTo({top:0,behavior:"smooth"}); } }
+function nextStation(){ if(idx<deck.length-1){ idx++; renderStation(); window.scrollTo({top:0,behavior:"smooth"}); } }
 function prevStation(){ if(idx>0){ idx--; renderStation(); window.scrollTo({top:0,behavior:"smooth"}); } }
 
 function endScreen(){
-  const pct = Math.round(firstTryCorrect/DATA.length*100);
+  const pct = Math.round(firstTryCorrect/deck.length*100);
   let msg = "Solid work — keep drilling the misses.";
-  if(pct>=80) msg = "Outstanding — you're exam-ready on these images.";
+  if(pct>=80) msg = "Outstanding — you're exam-ready on these.";
   else if(pct>=50) msg = "Good going — revise the tricky patterns and you'll nail them.";
   app.innerHTML = `
    <section class="screen">
-     <div class="ring">${firstTryCorrect}/${DATA.length}</div>
-     <h2>Session complete 🎉</h2>
-     <p><b>${pct}%</b> clean solves — stations you cracked with no wrong clicks on either step.</p>
+     <div class="ring">${firstTryCorrect}/${deck.length}</div>
+     <h2>${MODES[curMode].name} complete 🎉</h2>
+     <p><b>${pct}%</b> clean solves — questions you cracked with no wrong clicks.</p>
      <p>${msg}</p>
      <div class="how" style="grid-template-columns:1fr 1fr">
-       <div class="step"><div class="n">✓</div><div><b>${solvedStations} stations solved</b><span>All images completed.</span></div></div>
+       <div class="step"><div class="n">✓</div><div><b>${solvedStations} completed</b><span>Whole set finished.</span></div></div>
        <div class="step"><div class="n">↻</div><div><b>Spaced repetition</b><span>Re-run to push clean solves higher.</span></div></div>
      </div>
      <div class="tg">
@@ -985,6 +1496,7 @@ function endScreen(){
          <span class="tg-ic">✈</span><span class="tg-name">FMGE</span><span class="tg-handle">@crackfmgeprepriga</span></a>
      </div>
      <button class="btn btn-primary" onclick="begin()">Practise again ↻</button>
+     <button class="btn btn-ghost backbtn" onclick="startScreen()">☰ Back to menu</button>
    </section>`;
   window.scrollTo({top:0,behavior:"smooth"});
 }
