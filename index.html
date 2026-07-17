@@ -145,6 +145,12 @@ a{color:inherit}
 .tg-btn .tg-name{flex:1;font-weight:700;font-size:13.5px;color:var(--ink)}
 .tg-btn .tg-handle{font-weight:700;font-size:13px;color:#1c86bd}
 
+/* ---------- Exam filter ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 2px}
+.chip{font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:999px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);transition:.15s}
+.chip:hover{border-color:var(--indigo)}
+.chip-on{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;border-color:transparent}
+
 /* ---------- Home menu ---------- */
 .menu{margin-top:16px;display:flex;flex-direction:column;gap:12px}
 .mode-card{display:flex;align-items:center;gap:14px;text-align:left;width:100%;cursor:pointer;font-family:inherit;
@@ -1251,19 +1257,28 @@ const VIDEOS = [
 const KEYS = ["A","B","C","D"];
 const app = document.getElementById("app");
 
-// Random selection across all pools for the Mixed Exam.
-function pickMixed(n){
-  const pool = [...DATA, ...SCENARIOS, ...VIDEOS];
-  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-  return pool.slice(0, Math.min(n, pool.length));
-}
 const MIXED_N = 25;
+const EXAMS = ["NEET PG","INI-CET","UPSC CMS","FMGE"];
+let examFilter = "ALL";
 const MODES = {
-  images:   {name:"Image Stations",    deck:()=>DATA,              noun:"case"},
-  scenarios:{name:"Clinical Scenarios",deck:()=>SCENARIOS,         noun:"case"},
-  videos:   {name:"Video Cases",       deck:()=>VIDEOS,            noun:"clip"},
-  mixed:    {name:"Mixed Exam",        deck:()=>pickMixed(MIXED_N),noun:"question"}
+  images:   {name:"Image Cases",       noun:"case"},
+  scenarios:{name:"Clinical Scenarios",noun:"case"},
+  videos:   {name:"Video Cases",       noun:"clip"},
+  mixed:    {name:"Mixed Exam",        noun:"question"}
 };
+function baseDeck(key){
+  if(key==='scenarios') return SCENARIOS;
+  if(key==='videos')    return VIDEOS;
+  if(key==='mixed')     return [...DATA, ...SCENARIOS, ...VIDEOS];
+  return DATA;
+}
+// Filter a pool by the exam the aspirant selected (using each item's effective question tag).
+function applyFilter(arr){ return examFilter==='ALL' ? arr : arr.filter(d=>q2of(d).tag===examFilter); }
+function countFor(key){
+  const n = applyFilter(baseDeck(key)).length;
+  return key==='mixed' ? Math.min(MIXED_N, n) : n;
+}
+function setFilter(x){ examFilter = x; startScreen(); }
 
 let curMode = null;
 let deck = [];
@@ -1291,25 +1306,28 @@ function q2of(d){ return (typeof HARDS2!=='undefined' && HARDS2[d.id]) ? HARDS2[
 function startScreen(){
   app.innerHTML = `
    <section class="screen" style="text-align:left">
-     <h2 style="text-align:center">Pick your practice mode</h2>
-     <p style="text-align:center">Four ways to train — image-led cases, clinical vignettes, real video cases, and a mixed exam. Every question is a clinical scenario built at exam-topper difficulty.</p>
+     <h2 style="text-align:center">Pick your exam & mode</h2>
+     <p style="text-align:center">Choose the exam you're preparing for, then a mode. Every question is a clinical scenario at exam-topper difficulty — nothing easy.</p>
+     <div class="filters">
+       ${["ALL",...EXAMS].map(x=>`<button class="chip ${examFilter===x?'chip-on':''}" onclick="setFilter('${x}')">${x==='ALL'?'All exams':x}</button>`).join('')}
+     </div>
      <div class="menu">
        <button class="mode-card" onclick="startMode('images')">
          <span class="mc-ic mc-img">🔬</span>
          <span class="mc-b"><h3>Image Cases</h3><p>A clinical image with a hard scenario question + mastery cards.</p></span>
-         <span class="mc-n">${DATA.length}</span></button>
+         <span class="mc-n">${countFor('images')}</span></button>
        <button class="mode-card" onclick="startMode('scenarios')">
          <span class="mc-ic mc-sce">🧠</span>
          <span class="mc-b"><h3>Clinical Scenarios</h3><p>Exam-style vignettes across every subject — think hard.</p></span>
-         <span class="mc-n">${SCENARIOS.length}</span></button>
+         <span class="mc-n">${countFor('scenarios')}</span></button>
        <button class="mode-card" onclick="startMode('videos')">
          <span class="mc-ic mc-vid">🎬</span>
-         <span class="mc-b"><h3>Video Cases</h3><p>Watch a real clinical clip, then diagnose and manage.</p></span>
-         <span class="mc-n">${VIDEOS.length}</span></button>
+         <span class="mc-b"><h3>Video Cases</h3><p>Short 10–20s clips — watch, diagnose and manage.</p></span>
+         <span class="mc-n">${countFor('videos')}</span></button>
        <button class="mode-card" onclick="startMode('mixed')">
          <span class="mc-ic mc-mix">🎯</span>
-         <span class="mc-b"><h3>Mixed Exam</h3><p>${MIXED_N} random questions from all pools — one score, exam feel.</p></span>
-         <span class="mc-n">${MIXED_N}</span></button>
+         <span class="mc-b"><h3>Mixed Exam</h3><p>Random questions from all pools — one score, exam feel.</p></span>
+         <span class="mc-n">${countFor('mixed')}</span></button>
      </div>
    </section>`;
   window.scrollTo({top:0,behavior:"smooth"});
@@ -1317,8 +1335,15 @@ function startScreen(){
 
 function startMode(key){
   curMode = key;
-  deck = MODES[key].deck();
+  let pool = applyFilter(baseDeck(key));
+  if(key==='mixed'){
+    pool = [...pool];
+    for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    pool = pool.slice(0, Math.min(MIXED_N, pool.length));
+  }
+  deck = pool;
   idx = 0; firstTryCorrect = 0; solvedStations = 0; solvedSet = new Set();
+  if(!deck.length){ startScreen(); return; }
   renderStation();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -1336,9 +1361,12 @@ function progressHTML(){
 }
 
 function mediaHTML(d){
-  if(d.img)   return `<div class="imgwrap"><span class="imgtag">${d.modality}</span><img src="${d.img}" alt="clinical image" /></div>`;
-  if(d.video) return `<div class="videowrap"><iframe src="https://www.youtube-nocookie.com/embed/${d.video}" title="${d.modality}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
-     <a class="watchlink" href="https://youtu.be/${d.video}" target="_blank" rel="noopener">▶ Watch on YouTube if the clip doesn't load</a>`;
+  if(d.img) return `<div class="imgwrap"><span class="imgtag">${d.modality}</span><img src="${d.img}" alt="clinical image" /></div>`;
+  if(d.video){
+    const st = d.start||0, en = d.end||(st+15);   // short 15s clip window (per-video start/end override this)
+    return `<div class="videowrap"><iframe src="https://www.youtube-nocookie.com/embed/${d.video}?start=${st}&end=${en}&rel=0&modestbranding=1&playsinline=1" title="${d.modality}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+     <a class="watchlink" href="https://youtu.be/${d.video}?t=${st}" target="_blank" rel="noopener">▶ ${en-st}s clip · open the full video on YouTube</a>`;
+  }
   return "";
 }
 
