@@ -165,6 +165,49 @@ a{color:inherit}
 .mc-sce{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
 .mc-vid{background:linear-gradient(135deg,#ef4444,#f59e0b)}
 .mc-mix{background:linear-gradient(135deg,#16a34a,#0ea5e9)}
+.mc-cal{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
+.mc-lib{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+
+/* ---------- Calendar ---------- */
+.calhead{display:flex;align-items:center;justify-content:space-between;margin:4px 0 12px}
+.calhead h3{margin:0;font-size:17px;font-weight:800}
+.calnav{display:flex;gap:8px}
+.calnav button{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:16px;cursor:pointer;font-family:inherit}
+.calnav button:hover{border-color:var(--indigo)}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.caldow{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding-bottom:2px}
+.calcell{aspect-ratio:1;border-radius:12px;border:1.5px solid var(--line);background:#fafaff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--muted);position:relative}
+.calcell.has{background:#eef0ff;border-color:#c9ccf7;color:var(--ink);cursor:pointer;font-weight:800}
+.calcell.has:hover{border-color:var(--indigo);transform:translateY(-1px)}
+.calcell.today{outline:2px solid var(--indigo);outline-offset:1px}
+.calcell.locked .dot{background:#f59e0b}
+.calcell .dot{position:absolute;bottom:7px;width:6px;height:6px;border-radius:50%;background:var(--indigo)}
+.callegend{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--muted);margin-top:12px}
+.callegend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+/* ---------- Day view / quiz cards ---------- */
+.dayhead{display:flex;align-items:center;gap:10px;margin:2px 0 4px}
+.qcard{border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-top:12px;box-shadow:var(--shadow);background:#fff}
+.qcard .qtop{display:flex;align-items:center;gap:12px}
+.qcard .qic{width:46px;height:46px;border-radius:12px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto;font-weight:800}
+.qcard h3{margin:0;font-size:16px;font-weight:800}
+.qcard .qmeta{font-size:12px;color:var(--muted);margin-top:2px}
+.qcard .qbtns{display:flex;gap:9px;margin-top:13px;flex-wrap:wrap}
+.qcard .qbtns .btn{flex:1;min-width:120px;padding:11px 14px;font-size:14px}
+.btn-wa{background:#25D366;color:#fff}
+.btn-wa:hover{filter:brightness(1.05)}
+.btn-share{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn-share:hover{border-color:var(--indigo);color:var(--indigo-d)}
+.locknote{background:var(--amber-bg);border:1px solid var(--amber-line);color:#7a4a08;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:10px}
+.ex-np{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.ex-uc{background:linear-gradient(135deg,#0ea5e9,#2563eb)}
+.ex-fm{background:linear-gradient(135deg,#ef4444,#f59e0b)}
+
+/* ---------- Toast + score save ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1e2233;color:#fff;padding:11px 18px;border-radius:999px;font-size:13.5px;font-weight:600;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.savedbox{background:#eef7ff;border:1px solid #cfe6f6;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin:14px 0 4px;color:#1c4a6b;text-align:left}
+.namein{width:100%;box-sizing:border-box;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;margin-top:8px}
 
 /* ---------- Video ---------- */
 .videowrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
@@ -190,7 +233,7 @@ a{color:inherit}
 
 <header class="top">
   <div class="wrap">
-    <div class="brand">
+    <div class="brand" style="cursor:pointer" onclick="homeScreen()">
       <img src="https://prepriga.netlify.app/assets/prepriga_logo.png" alt="Prepriga" onerror="this.style.display='none'"/>
       <div>
         <div class="bname">Prepriga</div>
@@ -1252,6 +1295,186 @@ const VIDEOS = [
 ];
 
 /* ============================================================
+   DAILY — dated quizzes, one per exam per day. Add a new date
+   key each day with neetpg / upsccms / fmge quizzes.
+   ============================================================ */
+const DAILY = {
+ "2026-07-17":{
+  neetpg:{ exam:"NEET PG", questions:[
+   {id:"d0717_np1", modality:"NEET PG · Endocrinology",
+    vignette:"A 40-year-old with episodic headache, palpitations and drenching sweats has BP 210/120 during an attack; 24-hour urinary metanephrines are markedly raised and CT shows a 4 cm adrenal mass.",
+    s2:{tag:"NEET PG", q:"He is scheduled for adrenalectomy. The correct pre-operative preparation is:",
+     opts:["Alpha-blockade first (phenoxybenzamine) for 10–14 days, then add a beta-blocker","Beta-blocker first, then an alpha-blocker","A beta-blocker alone if BP is high","No blockade needed if BP is controlled on the day"],
+     correct:0,
+     exp:["Correct. Unopposed alpha stimulation must be blocked first (phenoxybenzamine/doxazosin) with volume repletion; a beta-blocker is added only AFTER adequate alpha-blockade, to control reflex tachycardia.","Reversing the order is dangerous — beta-blockade before alpha-blockade leaves unopposed alpha vasoconstriction and can precipitate a hypertensive crisis.","A beta-blocker alone causes unopposed alpha-mediated vasoconstriction — potentially fatal.","Even if BP looks controlled, intra-operative catecholamine surges require prior alpha-blockade and volume loading."]},
+    dd:{fast:"Pheochromocytoma surgery: alpha-block FIRST (phenoxybenzamine) + volume, THEN beta-block. Never beta before alpha.",
+     pattern:"Episodic headache + palpitations + sweating + hypertension = pheochromocytoma. Diagnose with plasma/urinary metanephrines; localise with CT/MRI/MIBG.",
+     deep:"Rule of 10s (10% bilateral, extra-adrenal, malignant, familial). Associations: MEN2, VHL, NF1. An extra-adrenal tumour is a paraganglioma.",
+     facts:"Give IV phentolamine for intra-operative surges. Avoid unopposed beta-blockers, glucagon and metoclopramide (can trigger a crisis).",
+     bonus:"Screen for MEN2 (medullary thyroid cancer, hyperparathyroidism) — check calcitonin/RET."}},
+   {id:"d0717_np2", modality:"NEET PG · Nephrology",
+    vignette:"A 65-year-old with small-cell lung cancer has Na 118, low serum osmolality, high urine osmolality and high urine sodium; he is clinically euvolaemic with normal thyroid and adrenal function.",
+    s2:{tag:"NEET PG", q:"The diagnosis and the correct management of this chronic, minimally symptomatic case are:",
+     opts:["SIADH — fluid restriction (± tolvaptan/demeclocycline) and treat the tumour","SIADH — rapid correction with 3% saline to normal within 6 hours","Cerebral salt wasting — aggressive saline and salt","Hypovolaemic hyponatraemia — give a loop diuretic"],
+     correct:0,
+     exp:["Correct. Euvolaemic hyponatraemia with concentrated urine, high urine sodium and normal thyroid/adrenal function = SIADH; chronic mild cases are managed with fluid restriction (vaptans/demeclocycline if needed) plus treating the cause (here SCLC).","Over-rapid correction risks osmotic demyelination (central pontine myelinolysis) — raise sodium by no more than ~8 mmol/L per 24 h.","Cerebral salt wasting causes HYPOvolaemia; this patient is euvolaemic, so it is SIADH.","He is euvolaemic, not hypovolaemic — a diuretic would worsen matters."]},
+    dd:{fast:"Euvolaemic hyponatraemia + concentrated urine + high urine Na + normal thyroid/adrenal = SIADH → fluid restrict; correct slowly.",
+     pattern:"SIADH causes: small-cell lung cancer, CNS disease, drugs (SSRIs, carbamazepine), pneumonia, pain/surgery.",
+     deep:"Correct Na by ≤8 mmol/L/24 h. Severe symptomatic hyponatraemia (seizures) → cautious 3% saline. Vaptans block the V2 receptor.",
+     facts:"SIADH vs cerebral salt wasting: both have high urine Na, but CSW is hypovolaemic (needs salt + volume) and SIADH is euvolaemic (restrict).",
+     bonus:"Over-correction → osmotic demyelination (locked-in); under-correction of ACUTE hyponatraemia → cerebral oedema."}},
+   {id:"d0717_np3", modality:"NEET PG · Cardiology",
+    vignette:"A 60-year-old hypertensive man has sudden tearing chest pain radiating to the back, unequal arm blood pressures, and CT angiography shows a dissection flap involving the ascending aorta.",
+    s2:{tag:"NEET PG", q:"Classification and definitive management:",
+     opts:["Stanford type A — emergency surgical repair","Stanford type B — medical management only","Stanford type A — thrombolysis","Stanford type B — immediate surgery"],
+     correct:0,
+     exp:["Correct. Any ascending-aorta involvement = Stanford A → a surgical emergency (risk of tamponade, acute aortic regurgitation, coronary occlusion); control heart rate and BP meanwhile.","Type B is descending-only; this involves the ascending aorta, so it is type A and needs surgery.","Thrombolysis is catastrophic in dissection — it is not a thrombotic occlusion.","Uncomplicated type B is managed medically, but this is a type A dissection."]},
+    dd:{fast:"Ascending aorta involved = Stanford A = surgery. Descending only = Stanford B = medical (control BP/HR) unless complicated.",
+     pattern:"Tearing chest-to-back pain + unequal pulses/BP + widened mediastinum = dissection. Risk: hypertension, Marfan, bicuspid valve, pregnancy.",
+     deep:"Initial medical therapy: IV beta-blocker (esmolol/labetalol) to target HR <60 and SBP 100–120, THEN a vasodilator — beta-block first to avoid reflex tachycardia and shear.",
+     facts:"Type A complications: tamponade, acute AR, MI, stroke. CT angiography is the investigation of choice; D-dimer is often raised.",
+     bonus:"The goal is to reduce dP/dt (rate of pressure rise) — which is why heart-rate control comes first."}},
+   {id:"d0717_np4", modality:"NEET PG · Pharmacology",
+    vignette:"A young man on an SSRI is given tramadol for pain and within hours develops agitation, sweating, hyperreflexia, lower-limb-predominant clonus, and a temperature of 39°C.",
+    s2:{tag:"NEET PG", q:"The diagnosis, the distinguishing feature, and the specific antidote are:",
+     opts:["Serotonin syndrome — neuromuscular hyperactivity (clonus/hyperreflexia); cyproheptadine","Neuroleptic malignant syndrome — 'lead-pipe' rigidity; dantrolene/bromocriptine","Malignant hyperthermia — after volatile anaesthetics; dantrolene","Anticholinergic toxidrome — dry skin; physostigmine"],
+     correct:0,
+     exp:["Correct. A serotonergic combination (SSRI + tramadol) with clonus and hyperreflexia (lower-limb predominant) plus hyperthermia = serotonin syndrome; treat supportively and with cyproheptadine (a serotonin antagonist).","NMS follows dopamine antagonists, develops over days, and shows 'lead-pipe' rigidity with HYPOreflexia — not clonus/hyperreflexia.","Malignant hyperthermia follows volatile anaesthetics/succinylcholine (RYR1 defect), not SSRIs.","An anticholinergic toxidrome has DRY skin and mydriasis without clonus; this patient is diaphoretic with clonus."]},
+    dd:{fast:"SSRI + another serotonergic drug + clonus/hyperreflexia + fever (onset in hours) = serotonin syndrome → cyproheptadine. Rigidity + hyporeflexia + antipsychotic + slow onset = NMS → dantrolene/bromocriptine.",
+     pattern:"Serotonergic culprits: SSRIs/SNRIs, tramadol, MAOIs, linezolid, triptans, ondansetron, St John's wort.",
+     deep:"Both cause hyperthermia and autonomic instability; the discriminator is the neuromuscular exam (clonus/hyperreflexia vs lead-pipe rigidity) plus the drug class and onset speed.",
+     facts:"Hunter criteria diagnose serotonin syndrome (clonus is key). Manage hyperthermia aggressively; benzodiazepines control agitation.",
+     bonus:"Onset: serotonin syndrome within hours; NMS over days."}},
+   {id:"d0717_np5", modality:"NEET PG · Oncology",
+    vignette:"Forty-eight hours after starting chemotherapy for Burkitt lymphoma, a patient becomes oliguric; labs show high potassium, high phosphate, high uric acid and LOW calcium.",
+    s2:{tag:"NEET PG", q:"The syndrome and the single most appropriate specific therapy for the uric acid are:",
+     opts:["Tumour lysis syndrome — rasburicase (with aggressive IV hydration)","Tumour lysis syndrome — IV calcium and stop hydration","Contrast nephropathy — N-acetylcysteine","Hypercalcaemia of malignancy — bisphosphonates"],
+     correct:0,
+     exp:["Correct. High K/phosphate/urate with low calcium after chemotherapy of a bulky, rapidly proliferating tumour = tumour lysis syndrome; rasburicase rapidly lowers uric acid alongside aggressive IV fluids and treatment of hyperkalaemia.","Give calcium only for symptomatic hypocalcaemia/hyperkalaemia, and never stop hydration — fluids are central to management.","The electrolyte pattern (high urate/K/phosphate, low Ca with AKI) is classic TLS, not contrast nephropathy.","Calcium is LOW here, so this is not hypercalcaemia of malignancy."]},
+    dd:{fast:"Post-chemo of a bulky/high-turnover tumour: ↑K, ↑PO₄, ↑urate, ↓Ca + AKI = tumour lysis → hydrate + rasburicase; treat hyperkalaemia.",
+     pattern:"Highest risk: Burkitt lymphoma, ALL, high WBC. Prophylaxis: hydration + allopurinol (or rasburicase in high-risk cases).",
+     deep:"Hyperphosphataemia binds calcium → hypocalcaemia; avoid giving calcium unless symptomatic (risk of calcium-phosphate deposition). Dialysis for refractory K/phosphate/uraemia.",
+     facts:"Rasburicase is contraindicated in G6PD deficiency (haemolysis). Allopurinol prevents new urate but doesn't clear existing urate; rasburicase does.",
+     bonus:"Cairo–Bishop criteria define TLS. Start prophylaxis BEFORE cytotoxic therapy in high-risk tumours."}}
+  ]},
+  upsccms:{ exam:"UPSC CMS", questions:[
+   {id:"d0717_uc1", modality:"UPSC CMS · Epidemiology",
+    vignette:"In a vaccine trial, the attack rate of influenza is 20% in the unvaccinated group and 5% in the vaccinated group.",
+    s2:{tag:"UPSC CMS", q:"The vaccine efficacy is:",
+     opts:["75%","25%","15%","80%"],
+     correct:0,
+     exp:["Correct. Vaccine efficacy = (ARU − ARV)/ARU = (20% − 5%)/20% = 75% — the proportional reduction in disease among the vaccinated.","25% is the relative risk (5/20), not the efficacy; efficacy = 1 − RR = 75%.","15% is the absolute risk reduction (ARU − ARV), not the efficacy.","80% miscomputes the ratio."]},
+    dd:{fast:"Vaccine efficacy = (ARU − ARV)/ARU = 1 − RR. Here 1 − (5/20) = 75%.",
+     pattern:"ARU = attack rate unvaccinated, ARV = vaccinated. Efficacy is relative; the absolute risk reduction (15%) is a separate measure.",
+     deep:"Efficacy (trial, ideal conditions) differs from effectiveness (real-world use). Herd immunity threshold = 1 − 1/R₀.",
+     facts:"Relative risk here = 0.25; efficacy and RR are complementary (efficacy = 1 − RR).",
+     bonus:"Number needed to vaccinate = 1/ARR = 1/0.15 ≈ 7."}},
+   {id:"d0717_uc2", modality:"UPSC CMS · Toxicology",
+    vignette:"A farmer is brought in with pinpoint pupils, profuse salivation, bronchorrhoea, muscle fasciculations and bradycardia after spraying his fields.",
+    s2:{tag:"UPSC CMS", q:"The poisoning and the correct combination of antidotes are:",
+     opts:["Organophosphate (cholinesterase inhibitor) — atropine + pralidoxime","Organophosphate — naloxone","Carbon monoxide — 100% oxygen","Opioid — atropine alone"],
+     correct:0,
+     exp:["Correct. This cholinergic (muscarinic + nicotinic) toxidrome from a cholinesterase inhibitor is treated with atropine (for muscarinic effects, titrated to a dry chest) plus pralidoxime (which reactivates acetylcholinesterase, for the nicotinic/muscle effects).","Naloxone reverses opioids and has no role in organophosphate poisoning.","Carbon monoxide poisoning causes headache and cherry-red skin, not this cholinergic toxidrome.","This is not opioid toxicity (no bronchorrhoea/fasciculations), and atropine alone omits pralidoxime."]},
+    dd:{fast:"Pinpoint pupils + secretions + fasciculations after pesticide = organophosphate → atropine (titrate to a clear chest) + pralidoxime early.",
+     pattern:"Muscarinic = DUMBELS (Defecation, Urination, Miosis, Bradycardia/Bronchorrhoea, Emesis, Lacrimation, Salivation). Nicotinic = fasciculations and weakness.",
+     deep:"Atropine reverses muscarinic effects; pralidoxime reactivates acetylcholinesterase before it 'ages', so give it early. Watch for the intermediate syndrome and respiratory failure.",
+     facts:"The atropine endpoint is drying of secretions / a clear chest, not pupil size. An 'aged' enzyme cannot be reactivated by pralidoxime.",
+     bonus:"Carbamates are reversible inhibitors — pralidoxime is generally not needed."}},
+   {id:"d0717_uc3", modality:"UPSC CMS · Occupational Medicine",
+    vignette:"A stone-quarry worker of 15 years has progressive dyspnoea; a chest X-ray shows upper-zone nodular opacities with 'egg-shell' calcification of the hilar lymph nodes.",
+    s2:{tag:"UPSC CMS", q:"The occupational disease and an important associated risk are:",
+     opts:["Silicosis — greatly increased risk of tuberculosis (silicotuberculosis)","Asbestosis — mesothelioma with lower-zone fibrosis","Byssinosis — 'Monday fever' from cotton dust","Coal workers' pneumoconiosis — no infection risk"],
+     correct:0,
+     exp:["Correct. Silica exposure (quarrying, sandblasting) causes upper-zone nodular fibrosis with egg-shell hilar calcification; silica impairs alveolar macrophages, so tuberculosis risk is greatly increased — screen for TB.","Asbestosis causes LOWER-zone fibrosis, pleural plaques and mesothelioma — not egg-shell hilar calcification.","Byssinosis (cotton dust) causes 'Monday fever' chest tightness, not nodular upper-zone fibrosis.","Coal workers' pneumoconiosis is a different dust; the TB risk here is specifically tied to silica."]},
+    dd:{fast:"Quarry/sandblasting + upper-zone nodules + egg-shell hilar calcification = silicosis → screen for TB.",
+     pattern:"Occupational lung disease: silica (upper zone, TB risk), asbestos (lower zone, pleural plaques, mesothelioma), cotton (byssinosis), coal (CWP, Caplan syndrome with RA).",
+     deep:"Silica is fibrogenic and impairs macrophage function. Progressive massive fibrosis can develop. Prevention: dust suppression, wet drilling, respirators and periodic screening.",
+     facts:"Egg-shell calcification also occurs in sarcoidosis, but the occupational history points to silicosis. It is a notifiable occupational disease.",
+     bonus:"Caplan syndrome = pneumoconiosis + rheumatoid lung nodules."}},
+   {id:"d0717_uc4", modality:"UPSC CMS · Community Medicine",
+    vignette:"Under India's Universal Immunization Programme, you are counselling the mother of a healthy newborn (institutional delivery) about the vaccines due at birth.",
+    s2:{tag:"UPSC CMS", q:"Which vaccines are given AT BIRTH in the Indian schedule?",
+     opts:["BCG, OPV-0 (zero dose) and the Hepatitis B birth dose","DPT, measles and Hepatitis B","MMR and rotavirus only","Only BCG"],
+     correct:0,
+     exp:["Correct. At birth the Indian UIP gives BCG, the OPV zero dose and the Hepatitis B birth dose (ideally within 24 hours).","DPT starts at 6 weeks and measles at 9 months — not at birth.","MMR is not the at-birth schedule, and rotavirus begins at 6 weeks.","BCG is given, but OPV-0 and the Hep-B birth dose are also due — not BCG alone."]},
+    dd:{fast:"India at birth: BCG + OPV-0 + Hepatitis B (within 24 h). Then DPT/OPV/Hib/rota/PCV/IPV at 6, 10, 14 weeks; measles/MR at 9–12 months.",
+     pattern:"BCG protects against severe childhood TB (miliary, meningitis). The Hep-B birth dose prevents perinatal transmission.",
+     deep:"OPV-0 is an extra dose at birth to boost mucosal immunity; the primary OPV series is at 6/10/14 weeks, and IPV is included too.",
+     facts:"BCG can be given up to 1 year if missed. The Hep-B birth dose is most effective within 24 hours of birth.",
+     bonus:"Measles-containing vaccine timing (9 months) is a classic exam point — measles was historically a leading vaccine-preventable cause of child death."}},
+   {id:"d0717_uc5", modality:"UPSC CMS · Community Medicine",
+    vignette:"During a cholera outbreak, a child with profuse watery ('rice-water') stools and moderate dehydration is to be managed with oral rehydration.",
+    s2:{tag:"UPSC CMS", q:"WHO low-osmolarity ORS works primarily because:",
+     opts:["Sodium is co-absorbed with glucose (SGLT1), and low osmolarity reduces stool output","It is hypertonic, which pulls water into the gut","It contains antibiotics that kill the vibrio","It works by providing calories alone"],
+     correct:0,
+     exp:["Correct. Glucose-coupled sodium absorption (the SGLT1 cotransporter) stays intact in cholera and drags water with it; the reduced-osmolarity formula (245 mOsm/L) lowers stool volume and vomiting versus the older ORS.","Low-osmolarity ORS is NOT hypertonic — hypertonic fluid would worsen the osmotic load.","ORS contains no antibiotics; it rehydrates. Antibiotics (doxycycline) are a separate adjunct in severe cholera.","It works by fluid and electrolyte replacement via glucose-coupled sodium transport, not by calories."]},
+    dd:{fast:"ORS works via glucose-coupled Na absorption (SGLT1). Low-osmolarity ORS (245 mOsm) reduces stool output and vomiting.",
+     pattern:"Cholera toxin raises cAMP → chloride/water secretion; but glucose–sodium cotransport is preserved, which is why ORS works.",
+     deep:"Composition per litre: Na 75, glucose 75, K 20, citrate 10, Cl 65 mmol. Severe dehydration needs IV Ringer's lactate first, then ORS.",
+     facts:"Zinc shortens diarrhoea in children; doxycycline shortens severe cholera. Rice-water stools = Vibrio cholerae (darting motility on dark-field).",
+     bonus:"The glucose–sodium cotransport principle is the basis of all oral rehydration."}}
+  ]},
+  fmge:{ exam:"FMGE", questions:[
+   {id:"d0717_f1", modality:"FMGE · Anatomy",
+    vignette:"After a mid-shaft humeral fracture, a patient cannot extend the wrist or fingers ('wrist drop') and has sensory loss over the dorsum of the first web space; elbow flexion is intact.",
+    s2:{tag:"FMGE", q:"Which nerve is injured, and where does it lie against the humerus?",
+     opts:["Radial nerve — in the spiral (radial) groove","Ulnar nerve — at the medial epicondyle","Median nerve — at the carpal tunnel","Axillary nerve — at the surgical neck"],
+     correct:0,
+     exp:["Correct. Wrist drop with dorsal first-web-space sensory loss after a mid-shaft humeral fracture is a radial nerve injury in the spiral groove; the triceps is often spared because its branches arise proximally.","An ulnar nerve injury at the medial epicondyle gives a claw hand and little-finger sensory loss, not wrist drop.","A median nerve lesion at the carpal tunnel causes thenar wasting and thumb/index sensory loss, not wrist drop.","An axillary nerve injury at the surgical neck causes deltoid weakness and 'regimental badge' sensory loss, not wrist drop."]},
+    dd:{fast:"Mid-shaft humerus fracture → wrist drop = radial nerve (spiral groove). Dorsal first-web-space sensory loss is the tell.",
+     pattern:"Nerve–fracture pairs: surgical neck of humerus → axillary; mid-shaft → radial; medial epicondyle → ulnar; supracondylar → median (anterior interosseous).",
+     deep:"The radial nerve supplies the extensors (mnemonic BEST — Brachioradialis, Extensors, Supinator, Triceps); spiral-groove lesions often spare the triceps.",
+     facts:"'Saturday-night palsy' (compression in the axilla) also weakens the triceps. Finger-drop and Wartenberg sign can accompany radial lesions.",
+     bonus:"Test the radial nerve with wrist and finger extension against gravity."}},
+   {id:"d0717_f2", modality:"FMGE · Biochemistry",
+    vignette:"A boy develops dark urine and jaundice after eating fava beans; the blood film shows 'bite cells' and Heinz bodies, and his haemoglobin has fallen acutely.",
+    s2:{tag:"FMGE", q:"The enzyme defect and the reason for the haemolysis are:",
+     opts:["G6PD deficiency — low NADPH/glutathione leaves red cells vulnerable to oxidative stress","Pyruvate kinase deficiency — reduced ATP","Hereditary spherocytosis — a spectrin defect","Sickle cell disease — HbS polymerisation"],
+     correct:0,
+     exp:["Correct. G6PD is the rate-limiting enzyme of the pentose phosphate pathway; deficiency lowers NADPH and reduced glutathione, so oxidant stress (fava beans, infection, drugs) denatures haemoglobin (Heinz bodies) and produces bite cells and haemolysis.","Pyruvate kinase deficiency causes chronic non-spherocytic haemolysis, not oxidant-triggered bite cells and Heinz bodies.","Spherocytosis shows spherocytes and increased osmotic fragility, not Heinz bodies after fava beans.","Sickle cell disease shows sickled cells and a positive sickling test, not oxidative bite cells."]},
+    dd:{fast:"Oxidant trigger (fava beans, infection, drugs) + bite cells + Heinz bodies = G6PD deficiency (X-linked).",
+     pattern:"Avoid oxidant drugs: primaquine, dapsone, sulfonamides, nitrofurantoin, rasburicase. Common in malaria-endemic regions (offers some protection).",
+     deep:"G6PD generates NADPH, which regenerates reduced glutathione to protect against oxidative damage. The enzyme assay is falsely normal during acute haemolysis (young reticulocytes are enzyme-rich) — test after recovery.",
+     facts:"Heinz bodies are denatured haemoglobin; the spleen 'bites' them out, forming bite cells. Inheritance is X-linked recessive.",
+     bonus:"Rasburicase and methylene blue can precipitate haemolysis in G6PD deficiency."}},
+   {id:"d0717_f3", modality:"FMGE · Toxicology",
+    vignette:"A man who drank illicit liquor presents with blurred vision progressing to blindness, a high-anion-gap metabolic acidosis and a raised osmolar gap.",
+    s2:{tag:"FMGE", q:"The toxic metabolite responsible and the antidote are:",
+     opts:["Formic acid; antidote fomepizole (or ethanol)","Oxalic acid; antidote fomepizole","Formic acid; antidote naloxone","Glycolic acid; antidote pyridoxine"],
+     correct:0,
+     exp:["Correct. Methanol is metabolised by alcohol dehydrogenase to formaldehyde then formic acid, which is toxic to the optic nerve (blindness) and drives the anion-gap acidosis; fomepizole (or ethanol) blocks alcohol dehydrogenase.","Oxalic acid is the toxic metabolite of ETHYLENE GLYCOL (calcium-oxalate crystals, renal failure), not methanol.","Naloxone is for opioids and has no role in methanol poisoning.","Glycolic acid is again an ethylene-glycol metabolite; pyridoxine is an adjunct for ethylene glycol, not the primary methanol antidote."]},
+    dd:{fast:"Illicit alcohol + blindness + high-anion-gap acidosis + osmolar gap = methanol → formic acid → fomepizole/ethanol (± folinic acid, dialysis).",
+     pattern:"Alcohol dehydrogenase makes toxic metabolites: methanol → formic acid (eyes), ethylene glycol → oxalic acid (kidneys). Fomepizole blocks ADH for both.",
+     deep:"Folinic acid speeds formic-acid metabolism in methanol poisoning; haemodialysis removes methanol/formate and corrects severe acidosis.",
+     facts:"An early osmolar gap (parent alcohol) evolves into an anion-gap acidosis (acid metabolites). Ethylene glycol shows calcium-oxalate crystalluria.",
+     bonus:"Fundoscopy in methanol toxicity may show optic-disc hyperaemia or oedema."}},
+   {id:"d0717_f4", modality:"FMGE · Pathology",
+    vignette:"A 30-year-old with fatigue, bleeding gums and pancytopenia has a marrow packed with blasts; some blasts contain pink, needle-shaped cytoplasmic inclusions, and DIC develops.",
+    s2:{tag:"FMGE", q:"The inclusion, the diagnosis, and the specific subtype with DIC plus its targeted therapy are:",
+     opts:["Auer rods; acute myeloid leukaemia; APML t(15;17) treated with ATRA","Smudge cells; chronic lymphocytic leukaemia; ibrutinib","Reed–Sternberg cells; Hodgkin lymphoma; ABVD","Philadelphia chromosome; CML; imatinib"],
+     correct:0,
+     exp:["Correct. Auer rods (pink, needle-like cytoplasmic inclusions in myeloblasts) indicate acute myeloid leukaemia; the acute promyelocytic subtype (APML, t(15;17), PML-RARA) classically causes DIC and responds to all-trans retinoic acid (ATRA).","Smudge cells are CLL (mature lymphocytes), not blasts with Auer rods.","Reed–Sternberg cells are Hodgkin lymphoma — a lymph-node disease, not marrow blasts with Auer rods.","The Philadelphia chromosome is CML (t(9;22)); this acute blast picture with Auer rods and DIC is APML."]},
+    dd:{fast:"Auer rods = AML. Blasts + DIC + t(15;17) = APML → ATRA (+ arsenic trioxide).",
+     pattern:"Leukaemia clues: Auer rods (AML), smudge cells (CLL), Philadelphia chromosome (CML), TdT-positive blasts (ALL).",
+     deep:"ATRA forces malignant promyelocytes to differentiate, correcting the coagulopathy; watch for differentiation (ATRA) syndrome. APML has an excellent prognosis when treated promptly.",
+     facts:"Myeloperoxidase stain is positive in AML (Auer rods are MPO-rich). DIC in APML is a haematological emergency.",
+     bonus:"ATRA plus arsenic trioxide can cure many APML cases without conventional chemotherapy."}},
+   {id:"d0717_f5", modality:"FMGE · Pathology",
+    vignette:"A thyroid nodule biopsy shows cells with overlapping nuclei, nuclear grooves, 'Orphan-Annie eye' clear nuclei and concentric laminated calcifications.",
+    s2:{tag:"FMGE", q:"The calcifications are called, and the diagnosis is:",
+     opts:["Psammoma bodies; papillary thyroid carcinoma","Psammoma bodies; medullary thyroid carcinoma","Asteroid bodies; anaplastic carcinoma","Councilman bodies; follicular carcinoma"],
+     correct:0,
+     exp:["Correct. Orphan-Annie-eye nuclei, nuclear grooves and psammoma bodies (concentric laminated calcifications) are diagnostic of papillary thyroid carcinoma — the commonest and best-prognosis thyroid cancer, which spreads via lymphatics.","Medullary carcinoma arises from parafollicular C cells (calcitonin, amyloid), not psammoma bodies with Orphan-Annie nuclei.","Asteroid bodies are seen in granulomas (sarcoidosis), not anaplastic carcinoma.","Councilman bodies are apoptotic hepatocytes (viral hepatitis), unrelated to thyroid cancer."]},
+    dd:{fast:"Orphan-Annie nuclei + nuclear grooves + psammoma bodies = papillary thyroid carcinoma (lymphatic spread, good prognosis).",
+     pattern:"Psammoma bodies also appear in papillary serous ovarian carcinoma, meningioma and mesothelioma.",
+     deep:"Papillary carcinoma is linked to RET/PTC and BRAF mutations and to prior radiation; diagnosis rests on nuclear features (FNAC), not architecture.",
+     facts:"Follicular carcinoma spreads haematogenously and needs capsular/vascular invasion for diagnosis; medullary secretes calcitonin (MEN2).",
+     bonus:"'Psammoma' comes from the Greek for sand — the laminated calcification."}}
+  ]}
+ }
+};
+
+/* ============================================================
    APP LOGIC
    ============================================================ */
 const KEYS = ["A","B","C","D"];
@@ -1278,7 +1501,7 @@ function countFor(key){
   const n = applyFilter(baseDeck(key)).length;
   return key==='mixed' ? Math.min(MIXED_N, n) : n;
 }
-function setFilter(x){ examFilter = x; startScreen(); }
+function setFilter(x){ examFilter = x; libraryScreen(); }
 
 let curMode = null;
 let deck = [];
@@ -1302,11 +1525,12 @@ function buildQ(src, fbKey){
 // Use the harder override question whenever one exists (works in any mode, incl. Mixed).
 function q2of(d){ return (typeof HARDS2!=='undefined' && HARDS2[d.id]) ? HARDS2[d.id] : d.s2; }
 
-/* ---------- Home menu ---------- */
-function startScreen(){
+/* ---------- Practice library menu ---------- */
+function libraryScreen(){
   app.innerHTML = `
    <section class="screen" style="text-align:left">
-     <h2 style="text-align:center">Pick your exam & mode</h2>
+     <button class="btn btn-ghost" style="width:auto;padding:8px 14px;font-size:13px;margin-bottom:12px" onclick="homeScreen()">← Home</button>
+     <h2 style="text-align:center">Practice Library — pick exam & mode</h2>
      <p style="text-align:center">Choose the exam you're preparing for, then a mode. Every question is a clinical scenario at exam-topper difficulty — nothing easy.</p>
      <div class="filters">
        ${["ALL",...EXAMS].map(x=>`<button class="chip ${examFilter===x?'chip-on':''}" onclick="setFilter('${x}')">${x==='ALL'?'All exams':x}</button>`).join('')}
@@ -1343,7 +1567,7 @@ function startMode(key){
   }
   deck = pool;
   idx = 0; firstTryCorrect = 0; solvedStations = 0; solvedSet = new Set();
-  if(!deck.length){ startScreen(); return; }
+  if(!deck.length){ libraryScreen(); return; }
   renderStation();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -1355,10 +1579,13 @@ function progressHTML(){
   return `
    <div class="bar-row"><div class="pbar"><i style="width:${pct}%"></i></div></div>
    <div class="meta">
-     <span>${MODES[curMode].name} · ${idx+1} of ${deck.length}</span>
+     <span>${curName()} · ${idx+1} of ${deck.length}</span>
      <span class="score-chip">Clean solves: ${firstTryCorrect}</span>
    </div>`;
 }
+function curName(){ return (curMode==='daily' && quizCtx) ? quizCtx.name : (MODES[curMode] ? MODES[curMode].name : ""); }
+function curNoun(){ return (curMode==='daily') ? "question" : (MODES[curMode] ? MODES[curMode].noun : "question"); }
+function backToMenu(){ if(curMode==='daily' && quizCtx) dayScreen(quizCtx.dateKey); else libraryScreen(); }
 
 function mediaHTML(d){
   if(d.img) return `<div class="imgwrap"><span class="imgtag">${d.modality}</span><img src="${d.img}" alt="clinical image" /></div>`;
@@ -1463,7 +1690,7 @@ function showStage3(){
   const s = document.getElementById("stage3");
   s.classList.remove("hidden");
   const last = idx === deck.length-1;
-  const nextLabel = last ? "Finish & see score 🎉" : `Next ${MODES[curMode].noun} →`;
+  const nextLabel = last ? "Finish & see score 🎉" : `Next ${curNoun()} →`;
   s.innerHTML = `
      <div class="dd">
        <div class="stagehead"><span class="stagebadge">Master it</span></div>
@@ -1480,7 +1707,7 @@ function showStage3(){
          ${idx>0?`<button class="btn btn-ghost" onclick="prevStation()">← Previous</button>`:``}
          <button class="btn btn-primary" onclick="${last?'endScreen()':'nextStation()'}">${nextLabel}</button>
        </div>
-       <button class="btn btn-ghost backbtn" onclick="startScreen()">☰ Back to menu</button>
+       <button class="btn btn-ghost backbtn" onclick="backToMenu()">☰ Back to menu</button>
      </div>`;
   s.scrollIntoView({behavior:"smooth", block:"start"});
 }
@@ -1496,6 +1723,7 @@ function nextStation(){ if(idx<deck.length-1){ idx++; renderStation(); window.sc
 function prevStation(){ if(idx>0){ idx--; renderStation(); window.scrollTo({top:0,behavior:"smooth"}); } }
 
 function endScreen(){
+  if(curMode==='daily') return dailyEndScreen();
   const pct = Math.round(firstTryCorrect/deck.length*100);
   let msg = "Solid work — keep drilling the misses.";
   if(pct>=80) msg = "Outstanding — you're exam-ready on these.";
@@ -1522,12 +1750,231 @@ function endScreen(){
          <span class="tg-ic">✈</span><span class="tg-name">FMGE</span><span class="tg-handle">@crackfmgeprepriga</span></a>
      </div>
      <button class="btn btn-primary" onclick="begin()">Practise again ↻</button>
-     <button class="btn btn-ghost backbtn" onclick="startScreen()">☰ Back to menu</button>
+     <button class="btn btn-ghost backbtn" onclick="backToMenu()">☰ Back to menu</button>
    </section>`;
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-startScreen();
+/* ============================================================
+   DAILY QUIZZES — landing, calendar, day view, quiz runner,
+   sharing, WhatsApp access-gating, and local (device) rankings.
+   ============================================================ */
+let quizCtx = null;                 // {dateKey, examKey, name}
+let calRef = null;                  // Date = first of displayed month
+const WA_NUMBER = "919713635563";
+const EXAM_META = {
+  neetpg:{name:"NEET PG", ic:"NP", cls:"ex-np"},
+  upsccms:{name:"UPSC CMS", ic:"UC", cls:"ex-uc"},
+  fmge:{name:"FMGE", ic:"FM", cls:"ex-fm"}
+};
+const EXAM_ORDER = ["neetpg","upsccms","fmge"];
+
+function todayMidnight(){ const t=new Date(); t.setHours(0,0,0,0); return t; }
+function dateKeyOf(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function prettyDate(key){ const d=new Date(key+"T00:00:00"); return d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"}); }
+function dayStatus(key){
+  if(!DAILY[key]) return "empty";
+  const d=new Date(key+"T00:00:00"), t=todayMidnight();
+  const diff=Math.round((t-d)/86400000);
+  if(d>t) return "future";
+  return diff<=2 ? "open" : "locked";
+}
+
+/* localStorage rankings (per device) */
+function loadResults(){ try{ return JSON.parse(localStorage.getItem("prepriga_results")||"{}"); }catch(e){ return {}; } }
+function getPlayer(){ try{ return localStorage.getItem("prepriga_name")||""; }catch(e){ return ""; } }
+function setPlayer(n){ try{ localStorage.setItem("prepriga_name", n); }catch(e){} }
+function saveResult(key, score, total){
+  const all=loadResults();
+  const prev=all[key]||{best:0, attempts:0, board:[]};
+  const rec={ best:Math.max(prev.best||0, score), total, attempts:(prev.attempts||0)+1, last:score, ts:Date.now(),
+    board:(prev.board||[]).concat([{name:getPlayer()||"You", score, ts:Date.now()}]).sort((a,b)=>b.score-a.score).slice(0,10) };
+  all[key]=rec;
+  try{ localStorage.setItem("prepriga_results", JSON.stringify(all)); }catch(e){}
+  return rec;
+}
+
+/* ---------- Landing / home ---------- */
+function homeScreen(){
+  curMode=null; quizCtx=null;
+  const tKey=dateKeyOf(todayMidnight());
+  const hasToday=!!DAILY[tKey];
+  app.innerHTML = `
+   <section class="screen" style="text-align:left">
+     <h2 style="text-align:center">Prepriga · Daily Test Series</h2>
+     <p style="text-align:center">One dated quiz per exam, every day — NEET PG, UPSC CMS and FMGE. Pick a date, or drill the full practice library.</p>
+     <div class="menu">
+       <button class="mode-card" onclick="calendarScreen()">
+         <span class="mc-ic mc-cal">📅</span>
+         <span class="mc-b"><h3>Daily Quizzes</h3><p>Calendar of dated tests — one each for NEET PG, UPSC CMS &amp; FMGE.</p></span>
+         <span class="mc-n">${hasToday?'Today':''}</span></button>
+       <button class="mode-card" onclick="libraryScreen()">
+         <span class="mc-ic mc-lib">📚</span>
+         <span class="mc-b"><h3>Practice Library</h3><p>50 image, scenario &amp; video cases + Mixed Exam, filter by exam.</p></span>
+         <span class="mc-n">50</span></button>
+     </div>
+     ${hasToday?`<p style="text-align:center;margin:16px 0 6px;font-weight:800;font-size:14px">Today's quizzes · ${prettyDate(tKey)}</p>`+dayCardsHTML(tKey):''}
+   </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- Calendar ---------- */
+function calendarScreen(ref){
+  curMode=null; quizCtx=null;
+  calRef = ref || calRef || new Date(todayMidnight().getFullYear(), todayMidnight().getMonth(), 1);
+  const y=calRef.getFullYear(), m=calRef.getMonth();
+  const first=new Date(y,m,1), startDow=first.getDay(), days=new Date(y,m+1,0).getDate();
+  const monthName=first.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  const tKey=dateKeyOf(todayMidnight());
+  let cells="";
+  for(let i=0;i<startDow;i++) cells+=`<div></div>`;
+  for(let d=1;d<=days;d++){
+    const key=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const st=dayStatus(key), has=st!=="empty";
+    const cls=["calcell", has?"has":"", key===tKey?"today":"", st==="locked"?"locked":""].join(" ");
+    const click=has?`onclick="dayScreen('${key}')"`:"";
+    cells+=`<div class="${cls}" ${click}>${d}${has?'<span class="dot"></span>':''}</div>`;
+  }
+  app.innerHTML = `
+   <section class="screen" style="text-align:left">
+     <button class="btn btn-ghost" style="width:auto;padding:8px 14px;font-size:13px;margin-bottom:12px" onclick="homeScreen()">← Home</button>
+     <div class="calhead">
+       <h3>${monthName}</h3>
+       <div class="calnav"><button onclick="calMove(-1)">‹</button><button onclick="calMove(1)">›</button></div>
+     </div>
+     <div class="calgrid">
+       ${["S","M","T","W","T","F","S"].map(x=>`<div class="caldow">${x}</div>`).join("")}
+       ${cells}
+     </div>
+     <div class="callegend"><span><i style="background:var(--indigo)"></i>Quiz available</span><span><i style="background:#f59e0b"></i>Locked (&gt;2 days)</span></div>
+   </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function calMove(delta){ calRef=new Date(calRef.getFullYear(), calRef.getMonth()+delta, 1); calendarScreen(calRef); }
+
+/* ---------- Day view ---------- */
+function dayCardsHTML(key){
+  const day=DAILY[key], st=dayStatus(key), results=loadResults();
+  return EXAM_ORDER.filter(ex=>day[ex]).map(ex=>{
+    const meta=EXAM_META[ex], q=day[ex], n=q.questions.length;
+    const rkey=key+":"+ex, rec=results[rkey];
+    const best=rec?`Your best: ${rec.best}/${n} · ${rec.attempts} attempt(s)`:"Not attempted yet";
+    const shareBtn=`<button class="btn btn-share" onclick="shareQuiz('${key}','${ex}')">🔗 Share</button>`;
+    let action;
+    if(st==="open") action=`<button class="btn btn-primary" onclick="startQuiz('${key}','${ex}')">Start test →</button>${shareBtn}`;
+    else action=`<a class="btn btn-wa" href="${waLink(key,ex)}" target="_blank" rel="noopener">Request access · WhatsApp</a>${shareBtn}`;
+    const lock = st==="locked" ? `<div class="locknote">🔒 This test is more than 2 days old. To unlock older tests, request access on WhatsApp (+91 9713635563).</div>` : "";
+    return `<div class="qcard">
+       <div class="qtop"><span class="qic ${meta.cls}">${meta.ic}</span>
+         <div><h3>${meta.name}</h3><div class="qmeta">${n} questions · exam-level · ${best}</div></div></div>
+       ${lock}
+       <div class="qbtns">${action}</div>
+     </div>`;
+  }).join("");
+}
+function dayScreen(key){
+  curMode=null; quizCtx=null;
+  if(!DAILY[key]) return calendarScreen();
+  const st=dayStatus(key);
+  const badge = st==="open" ? `<span class="subjbadge" style="margin:0">Open</span>` : (st==="locked"?`<span class="subjbadge" style="margin:0;color:#7a4a08;background:var(--amber-bg)">Locked</span>`:"");
+  app.innerHTML = `
+   <section class="screen" style="text-align:left">
+     <button class="btn btn-ghost" style="width:auto;padding:8px 14px;font-size:13px;margin-bottom:12px" onclick="calendarScreen()">← Calendar</button>
+     <div class="dayhead"><h2 style="margin:0;font-size:20px">${prettyDate(key)}</h2>${badge}</div>
+     <p style="color:var(--muted);font-size:13.5px;margin:2px 0 6px">Pick your exam's test for the day — each is a short, high-yield, exam-level set.</p>
+     ${dayCardsHTML(key)}
+   </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- Sharing / WhatsApp ---------- */
+function shareLink(key,ex){ return location.origin+location.pathname+"#quiz="+key+":"+ex; }
+function waLink(key,ex){ return "https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent("Hi, I'd like access to the Prepriga "+EXAM_META[ex].name+" test for "+prettyDate(key)+"."); }
+function shareQuiz(key,ex){
+  const url=shareLink(key,ex);
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>toast("Link copied — share it!"),()=>prompt("Copy this link:",url)); }
+  else { prompt("Copy this link:", url); }
+}
+function toast(msg){
+  let t=document.getElementById("toast");
+  if(!t){ t=document.createElement("div"); t.id="toast"; t.className="toast"; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(window.__tt); window.__tt=setTimeout(()=>t.classList.remove("show"),2200);
+}
+
+/* ---------- Quiz runner (daily) ---------- */
+function startQuiz(key, ex){
+  const day=DAILY[key]; if(!day||!day[ex]) return dayScreen(key);
+  if(dayStatus(key)==="locked") return lockScreen(key, ex);
+  curMode="daily";
+  quizCtx={ dateKey:key, examKey:ex, name:EXAM_META[ex].name+" · "+prettyDate(key) };
+  deck=day[ex].questions;
+  idx=0; firstTryCorrect=0; solvedStations=0; solvedSet=new Set();
+  renderStation();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function openQuizFromLink(key, ex){
+  ex=(ex||"").toLowerCase();
+  if(!DAILY[key]||!DAILY[key][ex]) return homeScreen();
+  if(dayStatus(key)==="locked") return lockScreen(key, ex);
+  startQuiz(key, ex);
+}
+function lockScreen(key, ex){
+  const meta=EXAM_META[ex]||{name:ex};
+  app.innerHTML = `
+   <section class="screen">
+     <div class="ring">🔒</div>
+     <h2>Test locked</h2>
+     <p>The <b>${meta.name}</b> test for <b>${prettyDate(key)}</b> is more than 2 days old. Today and the last 2 days are open to everyone; older tests need access.</p>
+     <a class="btn btn-wa" href="${waLink(key,ex)}" target="_blank" rel="noopener" style="display:block;margin-top:6px">Request access on WhatsApp</a>
+     <button class="btn btn-ghost backbtn" onclick="dayScreen('${key}')">← Back to that day</button>
+     <button class="btn btn-ghost backbtn" onclick="calendarScreen()">☰ Calendar</button>
+   </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- Daily results + local ranking ---------- */
+function dailyEndScreen(){
+  const total=deck.length, score=firstTryCorrect, pct=Math.round(score/total*100);
+  const key=quizCtx.dateKey, ex=quizCtx.examKey, rkey=key+":"+ex;
+  const rec=saveResult(rkey, score, total);
+  const board=(rec.board||[]).map((b,i)=>`${i+1}. ${b.name} — ${b.score}/${total}`).join("<br>");
+  const msg = pct>=80?"Outstanding — exam-ready.":pct>=50?"Good — review the misses.":"Keep drilling — you'll get there.";
+  app.innerHTML = `
+   <section class="screen">
+     <div class="ring">${score}/${total}</div>
+     <h2>${EXAM_META[ex].name} · done 🎉</h2>
+     <p><b>${pct}%</b> clean solves (no wrong clicks). ${msg}</p>
+     <div class="savedbox"><b>📊 Saved on this device</b><br>Your best: ${rec.best}/${total} over ${rec.attempts} attempt(s).<br><br><b>Leaderboard (this device)</b><br>${board}</div>
+     <input class="namein" id="playerName" placeholder="Your name for the leaderboard" value="${getPlayer()}" />
+     <button class="btn btn-ghost" style="margin-top:8px" onclick="savePlayerName()">Save my name</button>
+     <div class="qbtns" style="margin-top:14px">
+       <button class="btn btn-primary" onclick="startQuiz('${key}','${ex}')">Retry ↻</button>
+       <button class="btn btn-share" onclick="shareQuiz('${key}','${ex}')">🔗 Share</button>
+     </div>
+     <div class="tg">
+       <p class="tg-h">📣 For more quizzes like this, join your channel</p>
+       <a class="tg-btn" href="https://t.me/IndianGovtExamsAI" target="_blank" rel="noopener"><span class="tg-ic">✈</span><span class="tg-name">All Indian Govt Exams</span><span class="tg-handle">@IndianGovtExamsAI</span></a>
+       <a class="tg-btn" href="https://t.me/neetpgprepriga" target="_blank" rel="noopener"><span class="tg-ic">✈</span><span class="tg-name">NEET PG</span><span class="tg-handle">@neetpgprepriga</span></a>
+       <a class="tg-btn" href="https://t.me/upsccmsprepriga" target="_blank" rel="noopener"><span class="tg-ic">✈</span><span class="tg-name">UPSC CMS</span><span class="tg-handle">@upsccmsprepriga</span></a>
+       <a class="tg-btn" href="https://t.me/crackfmgeprepriga" target="_blank" rel="noopener"><span class="tg-ic">✈</span><span class="tg-name">FMGE</span><span class="tg-handle">@crackfmgeprepriga</span></a>
+     </div>
+     <button class="btn btn-ghost backbtn" onclick="dayScreen('${key}')">← Back to the day</button>
+     <button class="btn btn-ghost backbtn" onclick="homeScreen()">☰ Home</button>
+   </section>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function savePlayerName(){ const el=document.getElementById("playerName"); setPlayer(((el&&el.value)||"").trim().slice(0,24)); toast("Name saved"); }
+
+/* ---------- Router (shareable deep links) ---------- */
+function route(){
+  const m=(location.hash||"").match(/quiz=([0-9-]+):([a-zA-Z]+)/);
+  if(m){ openQuizFromLink(m[1], m[2]); return; }
+  homeScreen();
+}
+window.addEventListener("hashchange", ()=>{ const m=(location.hash||"").match(/quiz=([0-9-]+):([a-zA-Z]+)/); if(m) openQuizFromLink(m[1], m[2]); });
+
+route();
 </script>
 </body>
 </html>
