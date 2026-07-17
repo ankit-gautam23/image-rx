@@ -158,6 +158,7 @@ a{color:inherit}
 .mc-img{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
 .mc-sce{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
 .mc-vid{background:linear-gradient(135deg,#ef4444,#f59e0b)}
+.mc-mix{background:linear-gradient(135deg,#16a34a,#0ea5e9)}
 
 /* ---------- Video ---------- */
 .videowrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
@@ -1133,110 +1134,110 @@ const SCENARIOS = [
    ============================================================ */
 const VIDEOS = [
  {id:"vid_parkinson", modality:"Video · Neurology", video:"EQ0HG16EC3g",
-  vignette:"Watch the gait, then answer. The clip shows a shuffling, festinating gait with reduced arm swing and difficulty turning.",
-  s2:{tag:"NEET PG", q:"The core neurotransmitter defect and the FIRST-line drug are:",
-   opts:["Dopamine deficiency (substantia nigra) → levodopa–carbidopa","Acetylcholine excess → donepezil","GABA deficiency → baclofen","Dopamine excess → haloperidol"],
+  vignette:"A 68-year-old man is shown walking with a stooped, shuffling, festinating gait, reduced right arm swing and difficulty initiating turns. He has a pill-rolling rest tremor, a soft monotonous voice, and symptoms that began on the right; he responds well to levodopa.",
+  s2:{tag:"NEET PG", q:"Which single feature argues MOST strongly for idiopathic Parkinson's disease rather than a Parkinson-plus syndrome?",
+   opts:["Asymmetric onset with a good, sustained levodopa response","Recurrent falls within the first year of symptoms","Early symmetric autonomic failure (postural drop, incontinence)","A vertical (downgaze) supranuclear gaze palsy"],
    correct:0,
-   exp:["Correct. Parkinsonism is loss of nigrostriatal dopaminergic neurons; levodopa with a decarboxylase inhibitor (carbidopa) is most effective.","There is a relative cholinergic excess, but the primary defect is dopamine loss; donepezil treats Alzheimer's.","This is not a GABA problem; baclofen treats spasticity.","Dopamine is DEFICIENT; haloperidol (a D2 blocker) worsens parkinsonism."]},
+   exp:["Correct. Marked asymmetry at onset plus a robust, sustained levodopa response are hallmarks of idiopathic PD; Parkinson-plus syndromes tend to be symmetric and levodopa-poor.","Early falls in the first year suggest progressive supranuclear palsy (PSP), a Parkinson-plus syndrome.","Early prominent autonomic failure suggests multiple system atrophy (MSA).","A vertical supranuclear gaze palsy (especially of downgaze) is characteristic of PSP."]},
   dd:{fast:"Festinating shuffling gait + reduced arm swing + pill-rolling tremor + rigidity = Parkinsonism → dopamine loss → levodopa.",
    pattern:"TRAP: Tremor (resting, pill-rolling), Rigidity (cogwheel), Akinesia/bradykinesia, Postural instability. Lewy bodies contain α-synuclein.",
    deep:"Levodopa gives the best symptom control but causes long-term dyskinesias. Alternatives: dopamine agonists, MAO-B inhibitors. Drug-induced parkinsonism (antipsychotics, metoclopramide) is common — always review medications.",
    facts:"Parkinson-plus syndromes respond poorly to levodopa: PSP (vertical gaze palsy), MSA (autonomic failure), CBD.",
    bonus:"Asymmetric onset favours idiopathic Parkinson's; drug-induced parkinsonism is usually symmetric."}},
  {id:"vid_cerebellar", modality:"Video · Neurology", video:"ZVj5uEUrER0",
-  vignette:"Watch the gait. It is broad-based, unsteady and veering, and it worsens on turning.",
-  s2:{tag:"INI-CET", q:"This gait localises to the:",
-   opts:["Cerebellum","Dorsal columns (sensory ataxia)","Basal ganglia","Upper motor neuron (pyramidal tract)"],
+  vignette:"A 52-year-old man with a long history of heavy alcohol use is shown walking with a broad-based, staggering, veering gait that worsens on turning. Finger–nose testing shows past-pointing and an intention tremor, and his speech is scanning.",
+  s2:{tag:"INI-CET", q:"Which cerebellar region is classically affected, and which coexisting deficiency must be corrected IMMEDIATELY to prevent an amnestic syndrome?",
+   opts:["Anterior superior vermis; give thiamine before any glucose","Cerebellar hemispheres; give vitamin B12","Flocculonodular lobe; give folate","Dentate nucleus; give niacin"],
    correct:0,
-   exp:["Correct. A broad-based, staggering, 'drunken' gait that worsens on turning and is not vision-dependent = cerebellar ataxia (midline vermis).","Sensory (dorsal-column) ataxia is worse with the eyes closed (Romberg positive) and improves with vision.","Basal-ganglia disease gives a shuffling/festinating gait or chorea, not this broad-based pattern.","Pyramidal lesions give a spastic/scissoring or circumducting gait, not cerebellar staggering."]},
+   exp:["Correct. Alcohol classically damages the anterior superior vermis (gait ataxia); thiamine deficiency risks Wernicke encephalopathy, so give thiamine BEFORE glucose to avoid precipitating it and Korsakoff amnesia.","B12 deficiency causes subacute combined degeneration of the cord, not this vermian gait; hemisphere lesions give limb ataxia.","The flocculonodular lobe is the vestibulocerebellum (balance/eye movements), not the classic alcoholic vermian target; folate is not the emergency.","Niacin deficiency is pellagra; the dentate nucleus is not the classic alcohol target here."]},
   dd:{fast:"Broad-based veering gait, worse on turning, not vision-dependent = cerebellar. Romberg-positive (worse with eyes shut) = sensory/dorsal-column.",
    pattern:"Cerebellar signs = DANISH: Dysdiadochokinesia, Ataxia, Nystagmus, Intention tremor, Slurred/scanning speech, Hypotonia.",
    deep:"Vermis lesions cause truncal/gait ataxia; hemisphere lesions cause ipsilateral limb ataxia. Causes: stroke, MS, alcohol, tumour, hereditary (Friedreich).",
    facts:"Cerebellar signs are IPSILATERAL to the lesion. Alcohol classically damages the anterior vermis (gait ataxia).",
    bonus:"Friedreich ataxia: ataxia + absent reflexes + upgoing plantars + cardiomyopathy (GAA repeat, frataxin gene)."}},
  {id:"vid_gowers", modality:"Video · Paediatrics", video:"fwMRWrSVxVw",
-  vignette:"The boy 'climbs up his own legs' with his hands to get from the floor to standing (Gowers sign).",
-  s2:{tag:"FMGE", q:"The inheritance pattern and the defective protein are:",
-   opts:["X-linked recessive; dystrophin deficiency","Autosomal dominant; collagen defect","Autosomal recessive; frataxin","Mitochondrial; complex I"],
+  vignette:"A 4-year-old boy is shown rising from the floor by 'walking his hands up his legs' (Gowers sign). He has calf pseudohypertrophy, a waddling gait and a markedly raised creatine kinase. A maternal uncle used a wheelchair from his teens.",
+  s2:{tag:"FMGE", q:"Which complication is the LEADING cause of death and must be screened for even while he is still walking?",
+   opts:["Dilated cardiomyopathy (with respiratory failure) — screen with echocardiography","Renal failure from myoglobinuria","Hepatic cirrhosis from the raised enzymes","Early colorectal carcinoma"],
    correct:0,
-   exp:["Correct. Gowers sign reflects proximal (pelvic-girdle) weakness — Duchenne muscular dystrophy, X-linked recessive, with absent dystrophin.","DMD is X-linked, not autosomal dominant, and the protein is dystrophin, not collagen.","Frataxin is Friedreich ataxia, not DMD.","DMD is not a mitochondrial disorder."]},
+   exp:["Correct. Duchenne muscular dystrophy causes progressive dilated cardiomyopathy and respiratory failure — the leading causes of death; cardiac surveillance (echo) begins early, before symptoms.","The high CK is muscle-derived; there is no myoglobinuric renal threat here.","The raised 'enzymes' are muscle CK (and muscle-derived AST/ALT), not liver failure.","There is no colorectal cancer association in DMD."]},
   dd:{fast:"Boy + Gowers sign + calf pseudohypertrophy + very high CK = Duchenne (X-linked, dystrophin absent).",
    pattern:"DMD (absent dystrophin, frameshift) vs Becker (reduced dystrophin, in-frame, milder). Both X-linked; CK is markedly raised.",
    deep:"Presents at 2–5 y with proximal weakness, a waddling gait and calf pseudohypertrophy; wheelchair by ~12 y; dilated cardiomyopathy. Steroids slow progression.",
    facts:"Female carriers can have a raised CK and cardiomyopathy. Genetic testing confirms deletions.",
    bonus:"Becker is milder with later onset because the reading frame is preserved."}},
  {id:"vid_ino", modality:"Video · Neuro-ophthalmology", video:"tIOyFsBwUuY",
-  vignette:"On attempted horizontal gaze the adducting eye fails to cross the midline while the abducting eye shows nystagmus; convergence is preserved.",
-  s2:{tag:"NEET PG", q:"The lesion is in the:",
-   opts:["Medial longitudinal fasciculus (MLF)","Oculomotor (CN III) nucleus","Abducens nerve (CN VI) alone","Optic chiasm"],
+  vignette:"A 28-year-old woman is shown attempting horizontal gaze: the adducting eye fails to cross the midline while the abducting eye shows nystagmus; convergence is intact. Two years ago she had a self-limiting episode of painful visual loss in one eye.",
+  s2:{tag:"INI-CET", q:"What is the lesion, the most likely underlying diagnosis, and the best confirmatory investigation?",
+   opts:["MLF lesion; multiple sclerosis; MRI brain/cord with CSF oligoclonal bands","CN VI palsy; brainstem stroke; CT head","CN III palsy; posterior communicating aneurysm; CT angiography","Optic chiasm lesion; pituitary adenoma; MRI pituitary"],
    correct:0,
-   exp:["Correct. Internuclear ophthalmoplegia = an MLF lesion disconnecting the CN VI nucleus from the contralateral CN III → impaired adduction with abducting-eye nystagmus; bilateral INO in a young person suggests MS.","A CN III lesion causes ptosis, a 'down-and-out' eye and a dilated pupil — and convergence would be affected.","A CN VI palsy impairs ABduction, not adduction.","Chiasmal lesions cause a bitemporal hemianopia, not INO."]},
+   exp:["Correct. A young patient with INO (MLF demyelination) and prior optic neuritis points to multiple sclerosis; confirm with MRI showing dissemination in space and time plus CSF oligoclonal bands.","A CN VI palsy impairs abduction, not adduction — this is an INO.","A CN III palsy gives ptosis, a 'down-and-out' eye and a dilated pupil, not isolated adduction failure with intact convergence.","Chiasmal lesions cause a bitemporal hemianopia, not an INO."]},
   dd:{fast:"Failed adduction + abducting nystagmus with intact convergence = INO = MLF. Bilateral + young = MS; older = brainstem stroke.",
    pattern:"One-and-a-half syndrome = INO + an ipsilateral horizontal gaze palsy (MLF + PPRF/CN VI nucleus).",
    deep:"Convergence is preserved in INO because the CN III nucleus itself is intact — this distinguishes it from a third-nerve palsy.",
    facts:"MS is the classic cause of bilateral INO in the young; a lacunar brainstem infarct in the elderly.",
    bonus:"WEBINO = wall-eyed bilateral INO (bilateral exotropia plus INO)."}},
  {id:"vid_bppv", modality:"Video · ENT", video:"-6sE6AZqgK8",
-  vignette:"During the Dix–Hallpike manoeuvre the patient develops transient upbeating-torsional nystagmus with a short latency and fatigability.",
-  s2:{tag:"FMGE", q:"Diagnosis and treatment?",
-   opts:["Posterior-canal BPPV → Epley (canalith-repositioning) manoeuvre","Vestibular neuritis → steroids","Ménière disease → salt restriction/diuretics","Central vertigo → MRI and anticoagulation"],
+  vignette:"A 55-year-old woman has brief spinning vertigo triggered by rolling over in bed. During the Dix–Hallpike manoeuvre (shown) she develops upbeating-torsional nystagmus after a 3-second latency that fatigues on repetition. Hearing is normal and there are no other neurological signs.",
+  s2:{tag:"FMGE", q:"Which single feature, if present instead, would make you ABANDON this benign diagnosis and urgently image the brain?",
+   opts:["Direction-changing, non-fatigable, purely vertical nystagmus without latency","Torsional nystagmus with a short latency and fatigability","Vertigo reproducibly triggered by a change in head position","A completely normal audiogram"],
    correct:0,
-   exp:["Correct. Positional torsional-upbeat nystagmus with latency, fatigability and brief duration = posterior-canal BPPV → the Epley manoeuvre repositions the otoconia.","Vestibular neuritis causes constant (not positional) vertigo lasting days with unidirectional nystagmus.","Ménière disease has episodic vertigo with fluctuating hearing loss and tinnitus, not brief positional nystagmus.","Central nystagmus is non-fatigable, direction-changing and without latency; this pattern is benign/peripheral."]},
+   exp:["Correct. Central positional nystagmus is non-fatigable, has no latency and can be purely vertical or direction-changing — red flags that mandate urgent MRI for a posterior-fossa lesion.","Latency + fatigability + a torsional component is the benign BPPV pattern.","Positional triggering is expected in BPPV.","A normal audiogram supports BPPV (there is no cochlear involvement)."]},
   dd:{fast:"Positional, latent, fatigable torsional-upbeat nystagmus = posterior-canal BPPV → Epley. No hearing loss.",
    pattern:"Peripheral (BPPV/neuritis): fatigable, unidirectional, suppressed by fixation. Central: non-fatigable, direction-changing, vertical.",
    deep:"BPPV is displaced otoconia in (usually the posterior) semicircular canal. Epley repositions them; recurrence is common. Vestibular sedatives are only short-term.",
    facts:"The HINTS exam separates central from peripheral acute vertigo — a central pattern needs urgent imaging.",
    bonus:"Horizontal-canal BPPV is tested with the supine roll test and treated with the Lempert (barbecue) roll."}},
  {id:"vid_chorea", modality:"Video · Paediatrics", video:"wTCnbga3sqg",
-  vignette:"This child has rapid, irregular, non-repetitive involuntary movements (chorea) that began weeks after a sore throat.",
-  s2:{tag:"NEET PG", q:"The underlying condition and the criterion it satisfies are:",
-   opts:["Rheumatic fever — Sydenham chorea is a MAJOR Jones criterion","Huntington disease — CAG trinucleotide repeat","Wilson disease — copper deposition","Cerebral palsy — perinatal brain injury"],
+  vignette:"An 11-year-old girl is shown with rapid, irregular, non-repetitive involuntary movements, a fluctuating 'milkmaid grip' and hung-up knee reflexes. Six weeks earlier she had a sore throat, and an echocardiogram now shows mild mitral regurgitation.",
+  s2:{tag:"NEET PG", q:"Beyond treating the chorea, what is the SINGLE most important long-term intervention?",
+   opts:["Long-term (often years) benzathine penicillin prophylaxis against recurrent rheumatic fever","Lifelong levodopa","A single course of antibiotics only, then discharge","Genetic counselling for Huntington disease"],
    correct:0,
-   exp:["Correct. Post-streptococcal Sydenham chorea is a major Jones criterion for acute rheumatic fever; look for carditis/arthritis and give penicillin prophylaxis.","Huntington is adult-onset chorea with dementia and a family history, not a post-strep illness in a child.","Wilson causes chorea/dystonia but with a KF ring and liver disease, not a post-strep story.","Cerebral palsy is a non-progressive perinatal injury, not acute post-strep chorea."]},
+   exp:["Correct. Sydenham chorea confirms rheumatic fever; secondary prophylaxis with benzathine penicillin (for years, longer when there is carditis) prevents recurrences and progressive rheumatic heart disease.","The chorea here is self-limiting; levodopa treats Parkinsonism and would worsen chorea.","A single antibiotic course does not provide the required long-term secondary prophylaxis.","This is post-streptococcal, not Huntington disease."]},
   dd:{fast:"Child + post-strep chorea = Sydenham = major Jones criterion for rheumatic fever → penicillin prophylaxis and check the heart.",
    pattern:"Jones major criteria (JONES): Joints (migratory polyarthritis), ⊙ carditis, Nodules, Erythema marginatum, Sydenham chorea.",
    deep:"Sydenham chorea is a late manifestation (weeks–months) via anti-neuronal antibodies acting on the basal ganglia; it is self-limiting but signals rheumatic heart disease risk and the need for long-term penicillin.",
    facts:"Chorea can be the sole manifestation of rheumatic fever. Milkmaid grip and hung-up reflexes are clues.",
    bonus:"Erythema marginatum and subcutaneous nodules indicate severe rheumatic activity/carditis."}},
  {id:"vid_asterixis", modality:"Video · Gastroenterology", video:"JZ4F9Z2W0kE",
-  vignette:"With the arms outstretched and wrists extended, a jaundiced patient's hands show sudden brief 'flaps' (asterixis).",
-  s2:{tag:"UPSC CMS", q:"This indicates and is best managed by:",
-   opts:["Hepatic encephalopathy → lactulose (± rifaximin) and treat the precipitant","Cerebellar disease → thiamine only","Parkinsonism → levodopa","A simple resting tremor → a beta-blocker"],
+  vignette:"A 58-year-old man with cirrhosis is shown with a coarse flapping tremor on wrist extension (asterixis). He is drowsy and disoriented, was recently started on a sedative for insomnia, has been constipated, and today passed melaena.",
+  s2:{tag:"UPSC CMS", q:"Which combination of precipitants is driving this decompensation, and what is the priority management?",
+   opts:["GI bleed + constipation + sedative → lactulose, treat the bleed, stop the sedative","Simple dehydration → IV fluids alone","Hypoglycaemia → IV dextrose only","A new cerebellar stroke → thrombolysis"],
    correct:0,
-   exp:["Correct. Asterixis is a negative myoclonus of hepatic encephalopathy (also uraemia and CO₂ retention); lactulose lowers ammonia and you must find the precipitant (GI bleed, infection, constipation).","Cerebellar disease gives an intention tremor and ataxia, not a flapping negative myoclonus.","Parkinsonian tremor is a resting pill-rolling tremor, not a posture-dependent flap.","Essential tremor is a fine action tremor; this is metabolic, not treated with a beta-blocker."]},
+   exp:["Correct. A GI bleed (protein load), constipation and sedatives are classic precipitants of hepatic encephalopathy; treat with lactulose (titrated to 2–3 soft stools/day), manage the bleed and stop the sedative.","Dehydration alone doesn't explain the melaena or the sedative, and fluids won't clear the ammonia load.","Asterixis with these precipitants points to encephalopathy, not isolated hypoglycaemia.","Bilateral asterixis is metabolic, not a cerebellar stroke."]},
   dd:{fast:"Outstretched hands that flap = asterixis = metabolic (hepatic > uraemic/CO₂). In liver disease → lactulose + rifaximin + treat the trigger.",
    pattern:"Hepatic-encephalopathy triggers: GI bleed, infection/SBP, constipation, sedatives, hypokalaemia, dehydration, high protein load.",
    deep:"Ammonia crosses into the brain → astrocyte swelling. Grade with the West Haven criteria; titrate lactulose to 2–3 soft stools/day; rifaximin reduces ammonia-producing gut flora.",
    facts:"Asterixis is bilateral in metabolic causes; UNILATERAL asterixis suggests a focal brain lesion.",
    bonus:"Avoid over-sedation — benzodiazepines can precipitate encephalopathy."}},
  {id:"vid_mg", modality:"Video · Neurology", video:"KcNrE2PWY1U",
-  vignette:"A patient has fatigable ptosis (droopy lids worsening on sustained up-gaze) that IMPROVES after a 2-minute ice pack on the lid.",
-  s2:{tag:"INI-CET", q:"Diagnosis, antibody and a key caution:",
-   opts:["Myasthenia gravis (anti-AChR) — screen for thymoma and avoid drugs that worsen it","Lambert–Eaton syndrome — strength improves with rest","Third-nerve palsy — pupil-involving","Horner syndrome — miosis with ptosis"],
+  vignette:"A 34-year-old woman is shown with ptosis that worsens on sustained upgaze and improves after an ice pack; she reports difficulty chewing near the end of meals and slurred speech when tired. She is now admitted with a chest infection and becomes breathless with a falling vital capacity.",
+  s2:{tag:"INI-CET", q:"What is the diagnosis of the acute deterioration and the correct immediate treatment?",
+   opts:["Myasthenic crisis → IVIG or plasma exchange with airway/ventilatory support","Cholinergic crisis → give more pyridostigmine","Simple pneumonia → antibiotics alone and reassurance","Panic attack → reassurance and a benzodiazepine"],
    correct:0,
-   exp:["Correct. Fatigable ptosis improving with cooling (positive ice-pack test) = myasthenia gravis (anti-AChR, sometimes anti-MuSK); associated with thymoma/thymic hyperplasia, and many drugs (aminoglycosides, beta-blockers) worsen it.","Lambert–Eaton (anti-VGCC) strength IMPROVES with repeated effort and is paraneoplastic (small-cell lung cancer); ptosis is not the hallmark.","A CN III palsy gives fixed ptosis with a 'down-and-out' dilated pupil, not fatigability.","Horner's has partial ptosis with miosis and anhidrosis, not ice-responsive fatigable ptosis."]},
+   exp:["Correct. Infection can precipitate a myasthenic crisis (respiratory-muscle weakness with a falling FVC); treat with IVIG or plasma exchange plus close respiratory monitoring and ventilation as needed.","Increasing the anticholinesterase risks a cholinergic crisis; the acute need is immunotherapy plus airway support, not more pyridostigmine.","Antibiotics treat the trigger but ignore the neuromuscular respiratory failure.","A measured, falling vital capacity is not a panic attack — a benzodiazepine would worsen ventilation."]},
   dd:{fast:"Fatigable ptosis better with ice = myasthenia (anti-AChR). Cooling slows acetylcholinesterase, leaving more ACh. Image the thymus.",
    pattern:"MG: fatigable, worse with activity, ocular onset. LEMS: improves with activity, autonomic features, small-cell lung cancer, anti-VGCC.",
    deep:"Treat with pyridostigmine and immunosuppression; thymectomy for thymoma or generalised disease. A myasthenic crisis (respiratory failure) needs IVIG or plasma exchange.",
    facts:"Drugs that worsen MG: aminoglycosides, fluoroquinolones, beta-blockers, magnesium, penicillamine.",
    bonus:"The edrophonium (Tensilon) test is largely historical; the ice-pack test and serology are preferred."}},
  {id:"vid_absence", modality:"Video · Neurology (EEG)", video:"llmsAsMsjwA",
-  vignette:"A child has brief staring spells provoked by hyperventilation; the EEG shows generalised 3-Hz spike-and-wave discharges.",
-  s2:{tag:"NEET PG", q:"First-line drug and one to AVOID:",
-   opts:["Ethosuximide (or valproate); AVOID carbamazepine (it worsens absences)","Carbamazepine; avoid ethosuximide","Phenytoin; avoid valproate","Vigabatrin; avoid ethosuximide"],
+  vignette:"A 7-year-old girl has frequent brief staring spells with eyelid flutter, provoked when she hyperventilates; the EEG (shown) shows generalised 3-Hz spike-and-wave. She was mistakenly started on carbamazepine and her spells became more frequent.",
+  s2:{tag:"NEET PG", q:"Why did carbamazepine worsen her, and which drug is best if she ALSO had generalised tonic–clonic seizures?",
+   opts:["Sodium-channel blockers aggravate absence; use valproate (covers both absence and GTCS)","Carbamazepine was subtherapeutic; simply increase the dose","Ethosuximide would cover both absence and tonic–clonic seizures","Phenytoin is the best choice for combined seizure types"],
    correct:0,
-   exp:["Correct. Childhood absence epilepsy (3-Hz spike-wave) responds to ethosuximide (or valproate); carbamazepine, phenytoin and gabapentin can WORSEN absences.","Carbamazepine aggravates absence seizures — the opposite of first-line.","Phenytoin is not used for absence and can worsen it; valproate is actually effective.","Vigabatrin (for infantile spasms) is not first-line and can worsen absences."]},
+   exp:["Correct. Carbamazepine and phenytoin (sodium-channel blockers) can aggravate absence seizures; valproate is effective for both absence and generalised tonic–clonic seizures.","It is not a dosing issue — the drug class itself worsens absences.","Ethosuximide treats absence only and does NOT cover tonic–clonic seizures.","Phenytoin can worsen absences and is not the best choice for combined seizures."]},
   dd:{fast:"Brief staring, hyperventilation-provoked, 3-Hz spike-wave = childhood absence → ethosuximide/valproate. Avoid carbamazepine/phenytoin.",
    pattern:"Absence seizures have NO aura or post-ictal state (unlike focal seizures) and are provoked by hyperventilation; prognosis is good and they often remit.",
    deep:"Ethosuximide blocks thalamic T-type calcium channels. Choose valproate if generalised tonic–clonic seizures coexist; avoid valproate where possible in females of childbearing potential (teratogenic).",
    facts:"Ethosuximide has NO effect on tonic–clonic seizures — pick valproate when both types coexist.",
    bonus:"Juvenile myoclonic epilepsy: early-morning myoclonus + GTCS, valproate-responsive, usually lifelong."}},
  {id:"vid_tamponade", modality:"Video · Cardiology (Echo)", video:"tokryY1koxE",
-  vignette:"The echo shows a large pericardial effusion with the heart 'swinging' within it and diastolic collapse of the right-sided chambers.",
-  s2:{tag:"UPSC CMS", q:"The classic bedside sign and immediate treatment are:",
-   opts:["Pulsus paradoxus; urgent pericardiocentesis","Pulsus bisferiens; a beta-blocker","Water-hammer pulse; diuretics alone","Pulsus alternans; thrombolysis"],
+  vignette:"A 40-year-old woman with metastatic breast cancer is shown on echo with a large pericardial effusion, a swinging heart and diastolic collapse of the right atrium and ventricle. BP is 85/60 with a 15 mmHg inspiratory fall in systolic pressure; the ECG shows low voltage with beat-to-beat QRS amplitude variation.",
+  s2:{tag:"UPSC CMS", q:"Name the ECG sign, the bedside finding, and the ONE intervention that must be AVOIDED while arranging drainage:",
+   opts:["Electrical alternans + pulsus paradoxus; avoid diuretics/vasodilators (they drop preload)","Delta wave + water-hammer pulse; avoid beta-blockers","J (Osborn) waves + pulsus bisferiens; avoid IV fluids","U waves + pulsus alternans; avoid oxygen"],
    correct:0,
-   exp:["Correct. Tamponade shows a swinging heart with RA/RV diastolic collapse; the classic sign is pulsus paradoxus (>10 mmHg inspiratory fall in systolic BP); treat by draining the pericardium.","Pulsus bisferiens occurs in aortic regurgitation/HOCM, not tamponade.","A water-hammer pulse is aortic regurgitation; diuretics worsen tamponade by dropping preload.","Pulsus alternans suggests severe LV failure; thrombolysis is not tamponade therapy."]},
+   exp:["Correct. The swinging heart produces electrical alternans and tamponade gives pulsus paradoxus. Tamponade is preload-dependent, so diuretics and vasodilators are dangerous — give fluids and drain the pericardium.","A delta wave is WPW and a water-hammer pulse is aortic regurgitation — neither fits tamponade.","J (Osborn) waves occur in hypothermia, and IV fluids are actually helpful in tamponade.","U waves relate to hypokalaemia, and withholding oxygen is never appropriate."]},
   dd:{fast:"Swinging heart + RA/RV diastolic collapse + pulsus paradoxus = tamponade → pericardiocentesis. Avoid diuretics/vasodilators.",
    pattern:"Beck's triad: hypotension, raised JVP, muffled heart sounds. ECG: low voltage with electrical alternans.",
    deep:"Tamponade is a clinical diagnosis supported by echo and is preload-dependent — give fluids while arranging drainage and treat the cause (malignancy, uraemia, TB, trauma).",
@@ -1250,10 +1251,18 @@ const VIDEOS = [
 const KEYS = ["A","B","C","D"];
 const app = document.getElementById("app");
 
+// Random selection across all pools for the Mixed Exam.
+function pickMixed(n){
+  const pool = [...DATA, ...SCENARIOS, ...VIDEOS];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return pool.slice(0, Math.min(n, pool.length));
+}
+const MIXED_N = 25;
 const MODES = {
-  images:   {name:"Image Stations",    deck:()=>DATA,       noun:"image"},
-  scenarios:{name:"Clinical Scenarios",deck:()=>SCENARIOS,  noun:"case"},
-  videos:   {name:"Video Cases",       deck:()=>VIDEOS,     noun:"clip"}
+  images:   {name:"Image Stations",    deck:()=>DATA,              noun:"case"},
+  scenarios:{name:"Clinical Scenarios",deck:()=>SCENARIOS,         noun:"case"},
+  videos:   {name:"Video Cases",       deck:()=>VIDEOS,            noun:"clip"},
+  mixed:    {name:"Mixed Exam",        deck:()=>pickMixed(MIXED_N),noun:"question"}
 };
 
 let curMode = null;
@@ -1275,19 +1284,19 @@ function buildQ(src, fbKey){
   const order = shuffleOrder(src.opts.length);
   return { opts:order.map(i=>src.opts[i]), fb:order.map(i=>src[fbKey][i]), correct:order.indexOf(src.correct) };
 }
-// Use the harder override question for image stations when available.
-function q2of(d){ return (curMode==='images' && typeof HARDS2!=='undefined' && HARDS2[d.id]) ? HARDS2[d.id] : d.s2; }
+// Use the harder override question whenever one exists (works in any mode, incl. Mixed).
+function q2of(d){ return (typeof HARDS2!=='undefined' && HARDS2[d.id]) ? HARDS2[d.id] : d.s2; }
 
 /* ---------- Home menu ---------- */
 function startScreen(){
   app.innerHTML = `
    <section class="screen" style="text-align:left">
      <h2 style="text-align:center">Pick your practice mode</h2>
-     <p style="text-align:center">Three ways to train — spot-diagnosis images, brutal clinical vignettes, and real video cases. Every question is built at exam-topper difficulty.</p>
+     <p style="text-align:center">Four ways to train — image-led cases, clinical vignettes, real video cases, and a mixed exam. Every question is a clinical scenario built at exam-topper difficulty.</p>
      <div class="menu">
        <button class="mode-card" onclick="startMode('images')">
          <span class="mc-ic mc-img">🔬</span>
-         <span class="mc-b"><h3>Image Stations</h3><p>Spot the clinical image, then a hard tagged MCQ + mastery cards.</p></span>
+         <span class="mc-b"><h3>Image Cases</h3><p>A clinical image with a hard scenario question + mastery cards.</p></span>
          <span class="mc-n">${DATA.length}</span></button>
        <button class="mode-card" onclick="startMode('scenarios')">
          <span class="mc-ic mc-sce">🧠</span>
@@ -1297,6 +1306,10 @@ function startScreen(){
          <span class="mc-ic mc-vid">🎬</span>
          <span class="mc-b"><h3>Video Cases</h3><p>Watch a real clinical clip, then diagnose and manage.</p></span>
          <span class="mc-n">${VIDEOS.length}</span></button>
+       <button class="mode-card" onclick="startMode('mixed')">
+         <span class="mc-ic mc-mix">🎯</span>
+         <span class="mc-b"><h3>Mixed Exam</h3><p>${MIXED_N} random questions from all pools — one score, exam feel.</p></span>
+         <span class="mc-n">${MIXED_N}</span></button>
      </div>
    </section>`;
   window.scrollTo({top:0,behavior:"smooth"});
@@ -1334,31 +1347,17 @@ function renderStation(){
   stationErr = false;
   const media = mediaHTML(d);
   const vig = d.vignette ? `<div class="vignette">${d.vignette}</div>` : "";
-  const subj = (!d.s1 && d.modality) ? `<span class="subjbadge">${d.modality}</span>` : "";
+  const subj = (!d.img && d.modality) ? `<span class="subjbadge">${d.modality}</span>` : "";
   app.innerHTML = `
    ${progressHTML()}
    <section class="card">
      ${media}
      ${subj}
      ${vig}
-     <div id="stage1"></div>
-     <div id="stage2" class="hidden"></div>
+     <div id="stage2"></div>
      <div id="stage3" class="hidden"></div>
    </section>`;
-  if(d.s1){
-    RTs1 = buildQ(d.s1, "hints");
-    document.getElementById("stage1").innerHTML = `
-       <div class="stagehead"><span class="stagebadge">Step 1 · Spot it</span></div>
-       <div class="q">${d.s1.q}</div>
-       <div class="opts" id="s1opts"></div>
-       <div id="s1fb"></div>
-       <div class="actions hidden" id="s1next">
-         <button class="btn btn-primary" onclick="showStage2()">Next: the exam question →</button>
-       </div>`;
-    renderOpts("s1opts", RTs1.opts, (i,btn)=>answerS1(i,btn));
-  } else {
-    showStage2();
-  }
+  showStage2();
 }
 
 function renderOpts(containerId, opts, cb){
@@ -1399,7 +1398,7 @@ function showStage2(){
   s.classList.remove("hidden");
   s.innerHTML = `
      <div class="stagehead">
-       <span class="stagebadge">${d.s1 ? "Step 2 · Solve it" : "Exam question"}</span>
+       <span class="stagebadge">Clinical case</span>
        <span class="examtag">Exam-level · ${Q.tag}</span>
      </div>
      <div class="q">${Q.q}</div>
@@ -1410,7 +1409,6 @@ function showStage2(){
      </div>`;
   RTs2 = buildQ(Q, "exp");
   renderOpts("s2opts", RTs2.opts, (i,btn)=>answerS2(i,btn));
-  if(d.s1) s.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function answerS2(i, btn){
